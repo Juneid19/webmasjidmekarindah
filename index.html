@@ -1083,48 +1083,116 @@
             line-height: 1.7;
         }
 
-        /* Radio */
-        .radio-section {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            padding: 40px 0;
-        }
+        /* ==================== RADIO SECTION ==================== */
+.radio-section {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 30px 20px;
+}
 
-        .radio-container {
-            max-width: 750px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 30px;
-        }
+.radio-container {
+    max-width: 750px;  /* Dikurangi setengah */
+    margin: 0 auto;
+    display: flex;
+    align-items: stretch;
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
 
-        .radio-info {
-            color: var(--white);
-        }
+.radio-title {
+    background: linear-gradient(180deg, var(--primary-dark) 0%, #0a2e0d 100%);
+    color: var(--white);
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-width: 220px;
+    width: 220px;
+    flex-shrink: 0;
+}
 
-        .radio-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
+.radio-title i {
+    font-size: 4rem;
+    color: var(--gold);
+    margin-bottom: 20px;
+    animation: pulse 2s ease-in-out infinite;
+}
 
-        .radio-info h3 i {
-            color: var(--gold);
-            margin-right: 10px;
-        }
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
 
-        .radio-info p {
-            opacity: 0.9;
-        }
+.radio-title h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
 
-        .radio-player {
-            flex-shrink: 0;
-        }
+.radio-title p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
 
-        .radio-player iframe {
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
+    
+.radio-embed {
+    flex: 1;
+    min-height: 450px;
+    background: #f9f9f9;
+}
 
+.radio-embed iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    border: none;
+    display: block;
+}
+
+/* Radio Responsive */
+@media (max-width: 768px) {
+    .radio-container {
+        flex-direction: column;
+        border-radius: 15px;
+    }
+    
+    .radio-title {
+        width: 100%;
+        min-width: 100%;
+        padding: 25px 20px;
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    .radio-title i {
+        font-size: 2.5rem;
+        margin-bottom: 0;
+    }
+    
+    .radio-title .text {
+        text-align: left;
+    }
+    
+    .radio-title h3 {
+        font-size: 1.1rem;
+        margin-bottom: 3px;
+    }
+    
+    .radio-title p {
+        font-size: 0.8rem;
+    }
+    
+    .radio-embed {
+        min-height: 550px;
+    }
+    
+    .radio-embed iframe {
+        min-height: 550px;
+    }
+}
         /* Footer */
         footer {
             background: var(--gray-dark);
@@ -2428,4 +2496,5 @@
         }
     </script>
 </body>
+
 </html>
