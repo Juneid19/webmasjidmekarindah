@@ -993,48 +993,63 @@
         }
 
         /* Radio */
-        .radio {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            padding: 40px 0;
-        }
+.radio {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 50px 0;
+}
 
-        .radio-container {
-            max-width: 750px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 30px;
-        }
+.radio-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+}
 
-        .radio-info {
-            color: var(--white);
-        }
+.radio-info {
+    color: var(--white);
+    flex: 1;
+}
 
-        .radio-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.radio-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-        .radio-info h3 i {
-            color: var(--gold);
-        }
+.radio-info h3 i {
+    color: var(--gold);
+}
 
-        .radio-info p {
-            opacity: 0.9;
-        }
+.radio-info p {
+    opacity: 0.9;
+    font-size: 1rem;
+}
 
-        .radio-player {
-            flex-shrink: 0;
-        }
+.radio-player {
+    flex-shrink: 0;
+}
 
-        .radio-player iframe {
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
+.radio-player iframe {
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+    .radio-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .radio-player iframe {
+        width: 100%;
+        max-width: 320px;
+    }
+}
 
         /* Map */
         .lokasi {
@@ -1569,8 +1584,8 @@
                     <p>Dengarkan siaran radio islami 24 jam</p>
                 </div>
                 <div class="radio-player">
-                    <iframe src="https://juneid19.github.io/mekartop/" width="300" height="100" frameborder="0"></iframe>
-                </div>
+    <iframe src="https://juneid19.github.io/mekartop/" width="320" height="450" frameborder="0" style="border-radius: 10px;"></iframe>
+</div>
             </div>
         </div>
     </section>
