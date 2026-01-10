@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>iframe tester</title>
+    <link rel="stylesheet" href="https://public.codepenassets.com/css/reset-2.0.min.css">
+
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -701,59 +713,54 @@
         .donasi-card .btn-copy:hover {
             background: var(--primary-dark);
         }
-
-        /* Galeri */
-        .galeri {
-            background: var(--light);
-        }
-
-        .galeri-slideshow {
+        /* ==================== GALERI SLIDESHOW ==================== */
+        .galeri-slider {
+            position: relative;
             max-width: 900px;
             margin: 0 auto;
-            position: relative;
-            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
         }
 
-        .slide-container {
+        .galeri-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .galeri-slide {
+            min-width: 100%;
             position: relative;
-            height: 500px;
-            background: #000;
         }
 
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .galeri-slide img {
             width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        .slide.active {
-            opacity: 1;
-        }
-
-        .slide img {
-            width: 100%;
-            height: 100%;
+            height: 450px;
             object-fit: cover;
+            display: block;
         }
 
-        .slide-caption {
+        .galeri-slide iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+            display: block;
+        }
+
+        .galeri-slide .caption {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            color: var(--white);
-            padding: 30px;
+            color: white;
+            padding: 30px 20px 20px;
             text-align: center;
+            font-size: 1rem;
         }
 
-        .slide-nav {
+        /* Navigation Arrows */
+        .galeri-nav {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
@@ -767,78 +774,98 @@
             font-size: 1.2rem;
             transition: all 0.3s;
             z-index: 10;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
         }
 
-        .slide-nav:hover {
+        .galeri-nav:hover {
             background: var(--primary);
-            color: var(--white);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
         }
 
-        .slide-nav.prev {
-            left: 20px;
-        }
+        .galeri-nav.prev { left: 15px; }
+        .galeri-nav.next { right: 15px; }
 
-        .slide-nav.next {
-            right: 20px;
-        }
-
-        .slide-dots {
+        /* Dots Indicator */
+        .galeri-dots {
             display: flex;
             justify-content: center;
             gap: 10px;
-            padding: 20px;
-            background: var(--white);
+            margin-top: 20px;
         }
 
-        .slide-dot {
+        .galeri-dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: var(--gray);
+            background: #ccc;
             border: none;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
 
-        .slide-dot.active {
+        .galeri-dot.active {
             background: var(--primary);
+            transform: scale(1.2);
         }
 
-        .slide-thumbnails {
+        /* Thumbnails */
+        .galeri-thumbs {
             display: flex;
             gap: 10px;
-            padding: 15px;
-            background: var(--white);
+            margin-top: 20px;
             overflow-x: auto;
+            padding: 10px 0;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .slide-thumb {
+        .galeri-thumb {
             width: 80px;
             height: 60px;
             border-radius: 8px;
             overflow: hidden;
             cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s;
             border: 3px solid transparent;
-            transition: border-color 0.3s;
             flex-shrink: 0;
+            position: relative;
         }
 
-        .slide-thumb.active {
+        .galeri-thumb.active {
+            opacity: 1;
             border-color: var(--primary);
         }
 
-        .slide-thumb img {
+        .galeri-thumb:hover {
+            opacity: 1;
+        }
+
+        .galeri-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        /* Empty state */
+        .galeri-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .galeri-empty i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 15px;
         }
 
         /* Video Wrapper */
         .video-wrapper {
             position: relative;
             width: 100%;
-            height: 100%;
+            height: 450px;
         }
 
         .video-overlay {
@@ -872,9 +899,11 @@
             color: white;
             font-size: 2rem;
             transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
 
         .video-overlay:hover .play-button {
+            background: #ff0000;
             transform: translate(-50%, -50%) scale(1.1);
         }
 
@@ -899,7 +928,15 @@
             justify-content: center;
             color: white;
             gap: 15px;
-            cursor: pointer;
+        }
+
+        .social-placeholder i {
+            font-size: 4rem;
+        }
+
+        .social-placeholder span {
+            font-size: 1rem;
+            opacity: 0.9;
         }
 
         .social-placeholder.instagram {
@@ -910,15 +947,28 @@
             background: #000;
         }
 
-        .social-placeholder i {
-            font-size: 4rem;
+        /* Thumbnail play icon */
+        .thumb-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 0, 0, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.6rem;
         }
 
-        .social-placeholder span {
-            font-size: 1.2rem;
-            font-weight: 600;
+        .thumb-play.youtube {
+            background: #ff0000;
         }
 
+        /* Thumb Social */
         .thumb-social {
             width: 100%;
             height: 100%;
@@ -926,6 +976,7 @@
             align-items: center;
             justify-content: center;
             color: white;
+            font-size: 1.2rem;
         }
 
         .thumb-social.instagram {
@@ -936,6 +987,73 @@
             background: #000;
         }
 
+        /* TikTok External Link */
+        .tiktok-external {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            color: white;
+            gap: 20px;
+        }
+
+        .tiktok-external p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .btn-external {
+            background: #fe2c55;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-external:hover {
+            background: #ff0050;
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .galeri-slide img,
+            .galeri-slide iframe {
+                height: 280px;
+            }
+
+            .video-wrapper {
+                height: 280px;
+            }
+
+            .galeri-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .galeri-nav.prev { left: 10px; }
+            .galeri-nav.next { right: 10px; }
+
+            .galeri-thumb {
+                width: 60px;
+                height: 45px;
+            }
+
+            .video-overlay .play-button {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
         /* Pengumuman */
         .pengumuman {
             background: var(--white);
@@ -1543,19 +1661,15 @@
         </div>
     </section>
 
-    <!-- Galeri -->
-    <section class="galeri" id="galeri">
-        <div class="container">
-            <div class="section-title">
-                <h2><i class="fas fa-images"></i> Galeri Kegiatan</h2>
-                <p>Dokumentasi kegiatan masjid</p>
-            </div>
-            <div class="galeri-slideshow" id="galeriSlideshow">
-                <div class="loading">
-                    <i class="fas fa-spinner"></i>
-                    <span>Memuat galeri...</span>
-                </div>
-            </div>
+        <!-- Galeri -->
+    <section class="section section-alt" id="galeri">
+        <div class="section-title">
+            <i class="fas fa-images"></i>
+            <h2>Galeri Kegiatan</h2>
+            <p>Dokumentasi kegiatan masjid</p>
+        </div>
+        <div id="galeriContainer">
+            <div class="loading"><div class="spinner"></div></div>
         </div>
     </section>
 
@@ -1658,16 +1772,30 @@
             </div>
         </div>
     </div>
-        <script>
-        // ============================================
-        // KONFIGURASI
-        // ============================================
+           <script>
+                // ==================== GLOBAL VARIABLES ====================
+        // Data dari JSONBin
+        let DATA = {};
+        
+        // Galeri variables
+        var galeriIndex = 0;
+        var galeriInterval = null;
+        var galeriAutoplay = true;
+        var videoPlaying = false;
+
+        // Pengurus tab
+        let currentKategori = 'DKM';
+        
+
+        // CONFIGURATION - GANTI DENGAN DATA ANDA
         const CONFIG = {
             BIN_ID: '695efa2343b1c97be920910e', // Ganti dengan Bin ID Anda
-            API_KEY: '$2a$10$mu94DGoU.bNfbEUgWcjffueeAaIQfeb2hMzp.TM.Tg6M8JiaUOIVm ', // Ganti dengan API Key Anda
-            CIKARANG_LAT: -6.3,
-            CIKARANG_LNG: 107.15
+            API_KEY: '$2a$10$mu94DGoU.bNfbEUgWcjffueeAaIQfeb2hMzp.TM.Tg6M8JiaUOIVm', // Ganti dengan API Key Anda
+            ALADHAN_LAT: '-6.2615',
+            ALADHAN_LNG: '107.1119'
         };
+
+        
 
         const API_URL = 'https://api.jsonbin.io/v3/b/' + CONFIG.BIN_ID;
 
@@ -1680,27 +1808,38 @@
         let currentKategoriPengurus = 'Yayasan';
 
         // ============================================
-        // LOAD DATA
-        // ============================================
+             // Load Data from JSONBin
         async function loadData() {
             try {
-                const response = await fetch(API_URL + '/latest', {
+                console.log('Loading data from JSONBin...');
+                console.log('BIN_ID:', CONFIG.BIN_ID);
+                
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.BIN_ID}/latest`, {
                     headers: {
                         'X-Master-Key': CONFIG.API_KEY
                     }
                 });
                 
+                console.log('Response status:', response.status);
+                
                 if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+                    const errorText = await response.text();
+                    console.error('Response error:', errorText);
+                    throw new Error('HTTP ' + response.status);
                 }
                 
                 const result = await response.json();
-                siteData = result.record;
+                console.log('Data loaded:', result);
                 
+                DATA = result.record;
                 renderAll();
             } catch (error) {
                 console.error('Error loading data:', error);
-                // Load with default data if API fails
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+                
+                // Load default data jika gagal
+                alert('Gagal memuat data dari server. Menggunakan data default.');
                 loadDefaultData();
             }
         }
@@ -1788,96 +1927,146 @@
             if (alamatLokasi) alamatLokasi.textContent = s.alamat ? s.alamat : '';
         }
 
-        // ============================================
-        // JADWAL SHOLAT (API ALADHAN)
-        // ============================================
+         // ==================== LOAD JADWAL SHOLAT ====================
         async function loadJadwalSholat() {
-            const container = document.getElementById('jadwalGrid');
-            const sourceEl = document.getElementById('jadwalSource');
-            
+            var container = document.getElementById('jadwalContainer');
+            if (!container) return;
+
             try {
-                const today = new Date();
-                const dd = String(today.getDate()).padStart(2, '0');
-                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                const yyyy = today.getFullYear();
+                var today = new Date();
+                var day = today.getDate();
+                var month = today.getMonth() + 1;
+                var year = today.getFullYear();
+                var dateStr = day + '-' + month + '-' + year;
                 
-                const url = 'https://api.aladhan.com/v1/timings/' + dd + '-' + mm + '-' + yyyy + 
-                    '?latitude=' + CONFIG.CIKARANG_LAT + 
-                    '&longitude=' + CONFIG.CIKARANG_LNG + 
-                    '&method=20';
+                console.log('Loading jadwal for:', dateStr);
                 
-                const response = await fetch(url);
-                const data = await response.json();
+                var url = 'https://api.aladhan.com/v1/timings/' + dateStr + '?latitude=' + CONFIG.ALADHAN_LAT + '&longitude=' + CONFIG.ALADHAN_LNG + '&method=20';
                 
-                if (data.code === 200) {
-                    const timings = data.data.timings;
-                    
-                    const jadwalItems = [
-                        { nama: 'Subuh', waktu: timings.Fajr, icon: 'fa-sun' },
-                        { nama: 'Dzuhur', waktu: timings.Dhuhr, icon: 'fa-sun' },
-                        { nama: 'Ashar', waktu: timings.Asr, icon: 'fa-cloud-sun' },
-                        { nama: 'Maghrib', waktu: timings.Maghrib, icon: 'fa-moon' },
-                        { nama: 'Isya', waktu: timings.Isha, icon: 'fa-star' }
-                    ];
-                    
-                    container.innerHTML = jadwalItems.map(function(j) {
-                        return '<div class="jadwal-card">' +
-                            '<i class="fas ' + j.icon + '"></i>' +
-                            '<h3>' + j.nama + '</h3>' +
-                            '<div class="time">' + j.waktu + '</div>' +
-                        '</div>';
-                    }).join('');
-                    
-                    if (sourceEl) {
-                        sourceEl.innerHTML = '<i class="fas fa-info-circle"></i> Data dari API Aladhan - ' + 
-                            data.data.date.readable;
-                    }
-                } else {
-                    throw new Error('API Error');
+                var response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('API Error: ' + response.status);
                 }
+                
+                var result = await response.json();
+                
+                if (result.code !== 200 || !result.data || !result.data.timings) {
+                    throw new Error('Invalid API response');
+                }
+                
+                var timings = result.data.timings;
+
+                var jadwalHtml = '';
+                jadwalHtml += '<div class="jadwal-item">';
+                jadwalHtml += '<i class="fas fa-moon"></i>';
+                jadwalHtml += '<div class="waktu-name">Subuh</div>';
+                jadwalHtml += '<div class="waktu-time">' + timings.Fajr + '</div>';
+                jadwalHtml += '</div>';
+                
+                jadwalHtml += '<div class="jadwal-item">';
+                jadwalHtml += '<i class="fas fa-sun"></i>';
+                jadwalHtml += '<div class="waktu-name">Dzuhur</div>';
+                jadwalHtml += '<div class="waktu-time">' + timings.Dhuhr + '</div>';
+                jadwalHtml += '</div>';
+                
+                jadwalHtml += '<div class="jadwal-item">';
+                jadwalHtml += '<i class="fas fa-cloud-sun"></i>';
+                jadwalHtml += '<div class="waktu-name">Ashar</div>';
+                jadwalHtml += '<div class="waktu-time">' + timings.Asr + '</div>';
+                jadwalHtml += '</div>';
+                
+                jadwalHtml += '<div class="jadwal-item">';
+                jadwalHtml += '<i class="fas fa-cloud-moon"></i>';
+                jadwalHtml += '<div class="waktu-name">Maghrib</div>';
+                jadwalHtml += '<div class="waktu-time">' + timings.Maghrib + '</div>';
+                jadwalHtml += '</div>';
+                
+                jadwalHtml += '<div class="jadwal-item">';
+                jadwalHtml += '<i class="fas fa-star"></i>';
+                jadwalHtml += '<div class="waktu-name">Isya</div>';
+                jadwalHtml += '<div class="waktu-time">' + timings.Isha + '</div>';
+                jadwalHtml += '</div>';
+
+                container.innerHTML = jadwalHtml;
+                
+                var sourceEl = document.getElementById('jadwalSource');
+                if (sourceEl) {
+                    sourceEl.textContent = 'Data dari API Aladhan - ' + result.data.date.readable;
+                }
+                
+                console.log('Jadwal loaded successfully');
+                
             } catch (error) {
-                console.error('Error loading jadwal:', error);
-                // Fallback to manual jadwal
-                renderManualJadwal(container, sourceEl);
+                console.error('Error loading jadwal:', error.message);
+                
+                // FALLBACK: Gunakan data manual dari JSONBin atau default
+                loadJadwalManual();
             }
         }
 
-        function renderManualJadwal(container, sourceEl) {
-            let jadwal = null;
-            if (siteData && siteData.jadwalSholat) {
-                jadwal = siteData.jadwalSholat;
+        // ==================== FALLBACK JADWAL MANUAL ====================
+        function loadJadwalManual() {
+            var container = document.getElementById('jadwalContainer');
+            if (!container) return;
+            
+            // Cek apakah ada data jadwal di DATA
+            var jadwal = {
+                subuh: '04:30',
+                dzuhur: '12:00',
+                ashar: '15:15',
+                maghrib: '18:00',
+                isya: '19:15'
+            };
+            
+            // Gunakan data dari JSONBin jika ada
+            if (DATA && DATA.jadwalSholat) {
+                if (DATA.jadwalSholat.subuh) jadwal.subuh = DATA.jadwalSholat.subuh;
+                if (DATA.jadwalSholat.dzuhur) jadwal.dzuhur = DATA.jadwalSholat.dzuhur;
+                if (DATA.jadwalSholat.ashar) jadwal.ashar = DATA.jadwalSholat.ashar;
+                if (DATA.jadwalSholat.maghrib) jadwal.maghrib = DATA.jadwalSholat.maghrib;
+                if (DATA.jadwalSholat.isya) jadwal.isya = DATA.jadwalSholat.isya;
             }
+
+            var jadwalHtml = '';
+            jadwalHtml += '<div class="jadwal-item">';
+            jadwalHtml += '<i class="fas fa-moon"></i>';
+            jadwalHtml += '<div class="waktu-name">Subuh</div>';
+            jadwalHtml += '<div class="waktu-time">' + jadwal.subuh + '</div>';
+            jadwalHtml += '</div>';
             
-            if (!jadwal) {
-                jadwal = {
-                    subuh: '04:30',
-                    dzuhur: '12:00',
-                    ashar: '15:15',
-                    maghrib: '18:00',
-                    isya: '19:15'
-                };
-            }
+            jadwalHtml += '<div class="jadwal-item">';
+            jadwalHtml += '<i class="fas fa-sun"></i>';
+            jadwalHtml += '<div class="waktu-name">Dzuhur</div>';
+            jadwalHtml += '<div class="waktu-time">' + jadwal.dzuhur + '</div>';
+            jadwalHtml += '</div>';
             
-            const jadwalItems = [
-                { nama: 'Subuh', waktu: jadwal.subuh, icon: 'fa-sun' },
-                { nama: 'Dzuhur', waktu: jadwal.dzuhur, icon: 'fa-sun' },
-                { nama: 'Ashar', waktu: jadwal.ashar, icon: 'fa-cloud-sun' },
-                { nama: 'Maghrib', waktu: jadwal.maghrib, icon: 'fa-moon' },
-                { nama: 'Isya', waktu: jadwal.isya, icon: 'fa-star' }
-            ];
+            jadwalHtml += '<div class="jadwal-item">';
+            jadwalHtml += '<i class="fas fa-cloud-sun"></i>';
+            jadwalHtml += '<div class="waktu-name">Ashar</div>';
+            jadwalHtml += '<div class="waktu-time">' + jadwal.ashar + '</div>';
+            jadwalHtml += '</div>';
             
-            container.innerHTML = jadwalItems.map(function(j) {
-                var waktu = j.waktu ? j.waktu : '--:--';
-                return '<div class="jadwal-card">' +
-                    '<i class="fas ' + j.icon + '"></i>' +
-                    '<h3>' + j.nama + '</h3>' +
-                    '<div class="time">' + waktu + '</div>' +
-                '</div>';
-            }).join('');
+            jadwalHtml += '<div class="jadwal-item">';
+            jadwalHtml += '<i class="fas fa-cloud-moon"></i>';
+            jadwalHtml += '<div class="waktu-name">Maghrib</div>';
+            jadwalHtml += '<div class="waktu-time">' + jadwal.maghrib + '</div>';
+            jadwalHtml += '</div>';
             
+            jadwalHtml += '<div class="jadwal-item">';
+            jadwalHtml += '<i class="fas fa-star"></i>';
+            jadwalHtml += '<div class="waktu-name">Isya</div>';
+            jadwalHtml += '<div class="waktu-time">' + jadwal.isya + '</div>';
+            jadwalHtml += '</div>';
+
+            container.innerHTML = jadwalHtml;
+            
+            var sourceEl = document.getElementById('jadwalSource');
             if (sourceEl) {
-                sourceEl.innerHTML = '<i class="fas fa-info-circle"></i> Jadwal manual (API tidak tersedia)';
+                sourceEl.textContent = 'Jadwal sholat wilayah Cikarang (data manual)';
             }
+            
+            console.log('Using manual jadwal data');
         }
 
         // ============================================
@@ -2205,172 +2394,278 @@
             });
         }
 
-        // ============================================
-        // GALERI
-        // ============================================
+                // ==================== GALERI VARIABLES ====================
+        var galeriIndex = 0;
+        var galeriInterval = null;
+        var galeriAutoplay = true;
+        var videoPlaying = false;
+
+        // ==================== RENDER GALERI ====================
         function renderGaleri() {
-            const container = document.getElementById('galeriSlideshow');
-            
-            if (!siteData || !siteData.galeri || siteData.galeri.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>Belum ada foto/video</p></div>';
+            var container = document.getElementById('galeriContainer');
+            if (!container) return;
+
+            var galeri = [];
+            if (DATA.galeri) {
+                galeri = DATA.galeri;
+            }
+
+            if (galeri.length === 0) {
+                container.innerHTML = '<div class="galeri-empty"><i class="fas fa-images"></i><p>Belum ada foto/video di galeri</p></div>';
                 return;
             }
-            
-            const galeri = siteData.galeri;
-            
-            // Build slides
-            let slidesHtml = '';
-            let thumbsHtml = '';
-            
-            galeri.forEach(function(item, idx) {
-                const activeClass = idx === 0 ? 'active' : '';
-                
-                if (item.tipe === 'foto') {
-                    slidesHtml += '<div class="slide ' + activeClass + '">' +
-                        '<img src="' + item.url + '" alt="' + (item.caption ? item.caption : '') + '">' +
-                        '<div class="slide-caption">' + (item.caption ? item.caption : '') + '</div>' +
-                    '</div>';
-                    thumbsHtml += '<div class="slide-thumb ' + activeClass + '" onclick="goToSlide(' + idx + ')">' +
-                        '<img src="' + item.url + '" alt="">' +
-                    '</div>';
-                } else if (item.tipe === 'youtube') {
-                    slidesHtml += '<div class="slide ' + activeClass + '">' +
-                        '<div class="video-wrapper" data-type="youtube" data-id="' + item.youtubeId + '">' +
-                            '<div class="video-overlay" onclick="playVideo(this, \'youtube\', \'' + item.youtubeId + '\')">' +
-                                '<img src="https://img.youtube.com/vi/' + item.youtubeId + '/maxresdefault.jpg" alt="">' +
-                                '<div class="play-button"><i class="fas fa-play"></i></div>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="slide-caption">' + (item.caption ? item.caption : '') + '</div>' +
-                    '</div>';
-                    thumbsHtml += '<div class="slide-thumb ' + activeClass + '" onclick="goToSlide(' + idx + ')">' +
-                        '<img src="https://img.youtube.com/vi/' + item.youtubeId + '/default.jpg" alt="">' +
-                    '</div>';
-                } else if (item.tipe === 'instagram') {
-                    slidesHtml += '<div class="slide ' + activeClass + '">' +
-                        '<div class="video-wrapper" data-type="instagram">' +
-                            '<div class="social-placeholder instagram" onclick="window.open(\'' + item.instagramUrl + '\', \'_blank\')">' +
-                                '<i class="fab fa-instagram"></i>' +
-                                '<span>Lihat di Instagram</span>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="slide-caption">' + (item.caption ? item.caption : '') + '</div>' +
-                    '</div>';
-                    thumbsHtml += '<div class="slide-thumb ' + activeClass + '" onclick="goToSlide(' + idx + ')">' +
-                        '<div class="thumb-social instagram"><i class="fab fa-instagram"></i></div>' +
-                    '</div>';
-                } else if (item.tipe === 'tiktok') {
-                    slidesHtml += '<div class="slide ' + activeClass + '">' +
-                        '<div class="video-wrapper" data-type="tiktok">' +
-                            '<div class="social-placeholder tiktok" onclick="window.open(\'' + item.tiktokUrl + '\', \'_blank\')">' +
-                                '<i class="fab fa-tiktok"></i>' +
-                                '<span>Lihat di TikTok</span>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="slide-caption">' + (item.caption ? item.caption : '') + '</div>' +
-                    '</div>';
-                    thumbsHtml += '<div class="slide-thumb ' + activeClass + '" onclick="goToSlide(' + idx + ')">' +
-                        '<div class="thumb-social tiktok"><i class="fab fa-tiktok"></i></div>' +
-                    '</div>';
+
+            var slidesHTML = '';
+            var dotsHTML = '';
+            var thumbsHTML = '';
+
+            for (var i = 0; i < galeri.length; i++) {
+                var g = galeri[i];
+                var tipe = g.tipe ? g.tipe : 'foto';
+
+                // Backward compatibility
+                if (tipe === 'video') { tipe = 'youtube'; }
+
+                if (tipe === 'youtube' && g.youtubeId) {
+                    // YouTube Video
+                    slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="youtube">';
+                    slidesHTML = slidesHTML + '<div class="video-wrapper" id="videoWrapper' + i + '">';
+                    slidesHTML = slidesHTML + '<div class="video-overlay" onclick="playYoutube(' + i + ', \'' + g.youtubeId + '\')">';
+                    slidesHTML = slidesHTML + '<img src="https://img.youtube.com/vi/' + g.youtubeId + '/maxresdefault.jpg" onerror="this.src=\'https://img.youtube.com/vi/' + g.youtubeId + '/hqdefault.jpg\'" alt="Video">';
+                    slidesHTML = slidesHTML + '<div class="play-button youtube"><i class="fab fa-youtube"></i></div>';
+                    slidesHTML = slidesHTML + '</div>';
+                    slidesHTML = slidesHTML + '<div class="video-container" id="videoContainer' + i + '" style="display:none;"></div>';
+                    slidesHTML = slidesHTML + '</div>';
+                    if (g.caption) {
+                        slidesHTML = slidesHTML + '<div class="caption"><i class="fab fa-youtube"></i> ' + g.caption + '</div>';
+                    }
+                    slidesHTML = slidesHTML + '</div>';
+
+                    // Thumbnail
+                    thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+                    thumbsHTML = thumbsHTML + '<img src="https://img.youtube.com/vi/' + g.youtubeId + '/0.jpg" alt="Thumbnail">';
+                    thumbsHTML = thumbsHTML + '<div class="thumb-play youtube"><i class="fab fa-youtube"></i></div>';
+                    thumbsHTML = thumbsHTML + '</div>';
+
+                } else if (tipe === 'instagram' && g.instagramId) {
+                    // Instagram Post/Reel
+                    slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="instagram">';
+                    slidesHTML = slidesHTML + '<div class="video-wrapper" id="videoWrapper' + i + '">';
+                    slidesHTML = slidesHTML + '<div class="video-overlay instagram-overlay" onclick="playInstagram(' + i + ', \'' + g.instagramId + '\')">';
+                    slidesHTML = slidesHTML + '<div class="social-placeholder instagram"><i class="fab fa-instagram"></i><span>Klik untuk melihat</span></div>';
+                    slidesHTML = slidesHTML + '</div>';
+                    slidesHTML = slidesHTML + '<div class="video-container" id="videoContainer' + i + '" style="display:none;"></div>';
+                    slidesHTML = slidesHTML + '</div>';
+                    if (g.caption) {
+                        slidesHTML = slidesHTML + '<div class="caption"><i class="fab fa-instagram"></i> ' + g.caption + '</div>';
+                    }
+                    slidesHTML = slidesHTML + '</div>';
+
+                    // Thumbnail
+                    thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+                    thumbsHTML = thumbsHTML + '<div class="thumb-social instagram"><i class="fab fa-instagram"></i></div>';
+                    thumbsHTML = thumbsHTML + '</div>';
+
+                } else if (tipe === 'tiktok' && g.tiktokId) {
+                    // TikTok Video
+                    slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="tiktok">';
+                    slidesHTML = slidesHTML + '<div class="video-wrapper" id="videoWrapper' + i + '">';
+                    slidesHTML = slidesHTML + '<div class="video-overlay tiktok-overlay" onclick="playTiktok(' + i + ', \'' + g.tiktokId + '\', \'' + (g.tiktokUrl ? g.tiktokUrl : '') + '\')">';
+                    slidesHTML = slidesHTML + '<div class="social-placeholder tiktok"><i class="fab fa-tiktok"></i><span>Klik untuk melihat</span></div>';
+                    slidesHTML = slidesHTML + '</div>';
+                    slidesHTML = slidesHTML + '<div class="video-container" id="videoContainer' + i + '" style="display:none;"></div>';
+                    slidesHTML = slidesHTML + '</div>';
+                    if (g.caption) {
+                        slidesHTML = slidesHTML + '<div class="caption"><i class="fab fa-tiktok"></i> ' + g.caption + '</div>';
+                    }
+                    slidesHTML = slidesHTML + '</div>';
+
+                    // Thumbnail
+                    thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+                    thumbsHTML = thumbsHTML + '<div class="thumb-social tiktok"><i class="fab fa-tiktok"></i></div>';
+                    thumbsHTML = thumbsHTML + '</div>';
+
+                } else {
+                    // Foto
+                    var imgUrl = g.url ? g.url : 'https://via.placeholder.com/900x450';
+                    var imgAlt = g.caption ? g.caption : 'Galeri';
+
+                    slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="foto">';
+                    slidesHTML = slidesHTML + '<img src="' + imgUrl + '" alt="' + imgAlt + '">';
+                    if (g.caption) {
+                        slidesHTML = slidesHTML + '<div class="caption">' + g.caption + '</div>';
+                    }
+                    slidesHTML = slidesHTML + '</div>';
+
+                    // Thumbnail
+                    thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+                    thumbsHTML = thumbsHTML + '<img src="' + imgUrl + '" alt="Thumbnail">';
+                    thumbsHTML = thumbsHTML + '</div>';
                 }
-            });
-            
-            container.innerHTML = '<div class="slide-container">' + slidesHtml + '</div>' +
-                '<button class="slide-nav prev" onclick="prevSlide()"><i class="fas fa-chevron-left"></i></button>' +
-                '<button class="slide-nav next" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>' +
-                '<div class="slide-thumbnails">' + thumbsHtml + '</div>';
-            
-            // Start auto slideshow
-            startSlideshow();
+
+                // Dots
+                dotsHTML = dotsHTML + '<button class="galeri-dot ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')"></button>';
+            }
+
+            var html = '';
+            html = html + '<div class="galeri-slider">';
+            html = html + '<div class="galeri-track" id="galeriTrack">' + slidesHTML + '</div>';
+            html = html + '<button class="galeri-nav prev" onclick="moveGaleri(-1)"><i class="fas fa-chevron-left"></i></button>';
+            html = html + '<button class="galeri-nav next" onclick="moveGaleri(1)"><i class="fas fa-chevron-right"></i></button>';
+            html = html + '</div>';
+            html = html + '<div class="galeri-dots" id="galeriDots">' + dotsHTML + '</div>';
+            html = html + '<div class="galeri-thumbs" id="galeriThumbs">' + thumbsHTML + '</div>';
+
+            container.innerHTML = html;
+
+            galeriIndex = 0;
+            startGaleriAutoplay();
         }
 
-        function playVideo(overlay, type, id) {
-            // Pause slideshow
-            stopSlideshow();
-            
-            const wrapper = overlay.parentElement;
-            
-            if (type === 'youtube') {
-                wrapper.innerHTML = '<div class="video-container">' +
-                    '<iframe src="https://www.youtube.com/embed/' + id + '?autoplay=1" allowfullscreen allow="autoplay"></iframe>' +
-                '</div>';
+        // ==================== PLAY YOUTUBE ====================
+        function playYoutube(index, youtubeId) {
+            stopGaleriAutoplay();
+            videoPlaying = true;
+
+            var wrapper = document.getElementById('videoWrapper' + index);
+            if (wrapper) {
+                var overlay = wrapper.querySelector('.video-overlay');
+                var container = document.getElementById('videoContainer' + index);
+
+                if (overlay) { overlay.style.display = 'none'; }
+                if (container) {
+                    container.style.display = 'block';
+                    container.innerHTML = '<iframe src="https://www.youtube.com/embed/' + youtubeId + '?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+                }
             }
         }
 
-        function startSlideshow() {
-            stopSlideshow();
-            slideInterval = setInterval(function() {
-                nextSlide();
-            }, 4000);
-        }
+        // ==================== PLAY INSTAGRAM ====================
+        function playInstagram(index, instagramId) {
+            stopGaleriAutoplay();
+            videoPlaying = true;
 
-        function stopSlideshow() {
-            if (slideInterval) {
-                clearInterval(slideInterval);
-                slideInterval = null;
+            var wrapper = document.getElementById('videoWrapper' + index);
+            if (wrapper) {
+                var overlay = wrapper.querySelector('.video-overlay');
+                var container = document.getElementById('videoContainer' + index);
+
+                if (overlay) { overlay.style.display = 'none'; }
+                if (container) {
+                    container.style.display = 'block';
+                    container.innerHTML = '<iframe src="https://www.instagram.com/p/' + instagramId + '/embed" frameborder="0" scrolling="no" allowtransparency="true"></iframe>';
+                }
             }
         }
 
-        function goToSlide(idx) {
-            const slides = document.querySelectorAll('.slide');
-            const thumbs = document.querySelectorAll('.slide-thumb');
-            
-            if (slides.length === 0) return;
-            
-            // Reset video if leaving a video slide
-            resetVideoOnSlide(currentSlide);
-            
-            slides.forEach(function(s, i) {
-                s.classList.toggle('active', i === idx);
-            });
-            
-            thumbs.forEach(function(t, i) {
-                t.classList.toggle('active', i === idx);
-            });
-            
-            currentSlide = idx;
-            
-            // Restart slideshow
-            startSlideshow();
-        }
+        // ==================== PLAY TIKTOK ====================
+        function playTiktok(index, tiktokId, tiktokUrl) {
+            stopGaleriAutoplay();
+            videoPlaying = true;
 
-        function nextSlide() {
-            const slides = document.querySelectorAll('.slide');
-            if (slides.length === 0) return;
-            
-            let next = currentSlide + 1;
-            if (next >= slides.length) {
-                next = 0;
-            }
-            goToSlide(next);
-        }
+            var wrapper = document.getElementById('videoWrapper' + index);
+            if (wrapper) {
+                var overlay = wrapper.querySelector('.video-overlay');
+                var container = document.getElementById('videoContainer' + index);
 
-        function prevSlide() {
-            const slides = document.querySelectorAll('.slide');
-            if (slides.length === 0) return;
-            
-            let prev = currentSlide - 1;
-            if (prev < 0) {
-                prev = slides.length - 1;
-            }
-            goToSlide(prev);
-        }
+                if (overlay) { overlay.style.display = 'none'; }
+                if (container) {
+                    container.style.display = 'block';
 
-        function resetVideoOnSlide(idx) {
-            const slides = document.querySelectorAll('.slide');
-            if (slides[idx]) {
-                const wrapper = slides[idx].querySelector('.video-wrapper');
-                if (wrapper && wrapper.dataset.type === 'youtube') {
-                    const videoContainer = wrapper.querySelector('.video-container');
-                    if (videoContainer) {
-                        const id = wrapper.dataset.id;
-                        wrapper.innerHTML = '<div class="video-overlay" onclick="playVideo(this, \'youtube\', \'' + id + '\')">' +
-                            '<img src="https://img.youtube.com/vi/' + id + '/maxresdefault.jpg" alt="">' +
-                            '<div class="play-button"><i class="fas fa-play"></i></div>' +
-                        '</div>';
+                    // TikTok embed
+                    if (tiktokId.indexOf('vm_') === 0 || tiktokId.length < 10) {
+                        // Short URL - buka di tab baru karena tidak bisa embed
+                        container.innerHTML = '<div class="tiktok-external"><i class="fab fa-tiktok" style="font-size:3rem;"></i><p>TikTok tidak bisa di-embed langsung.</p><a href="' + tiktokUrl + '" target="_blank" class="btn-external"><i class="fab fa-tiktok"></i> Buka di TikTok</a></div>';
+                    } else {
+                        container.innerHTML = '<iframe src="https://www.tiktok.com/embed/v2/' + tiktokId + '" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
                     }
                 }
             }
+        }
+
+        // ==================== STOP VIDEO ====================
+        function stopVideo(index) {
+            var wrapper = document.getElementById('videoWrapper' + index);
+            if (wrapper) {
+                var overlay = wrapper.querySelector('.video-overlay');
+                var container = document.getElementById('videoContainer' + index);
+
+                if (overlay) { overlay.style.display = 'flex'; }
+                if (container) {
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                }
+            }
+            videoPlaying = false;
+        }
+
+        function stopAllVideos() {
+            var galeri = DATA.galeri ? DATA.galeri : [];
+            for (var i = 0; i < galeri.length; i++) {
+                stopVideo(i);
+            }
+            videoPlaying = false;
+        }
+
+        // ==================== GALERI NAVIGATION ====================
+        function moveGaleri(direction) {
+            var galeri = DATA.galeri ? DATA.galeri : [];
+            if (galeri.length === 0) return;
+
+            stopAllVideos();
+
+            galeriIndex = galeriIndex + direction;
+            if (galeriIndex < 0) { galeriIndex = galeri.length - 1; }
+            if (galeriIndex >= galeri.length) { galeriIndex = 0; }
+
+            updateGaleriPosition();
+            if (!videoPlaying) { startGaleriAutoplay(); }
+        }
+
+        function goToGaleri(index) {
+            stopAllVideos();
+            galeriIndex = index;
+            updateGaleriPosition();
+            startGaleriAutoplay();
+        }
+
+        function updateGaleriPosition() {
+            var track = document.getElementById('galeriTrack');
+            if (track) {
+                track.style.transform = 'translateX(-' + (galeriIndex * 100) + '%)';
+            }
+
+            var dots = document.querySelectorAll('.galeri-dot');
+            for (var i = 0; i < dots.length; i++) {
+                if (i === galeriIndex) {
+                    dots[i].classList.add('active');
+                } else {
+                    dots[i].classList.remove('active');
+                }
+            }
+
+            var thumbs = document.querySelectorAll('.galeri-thumb');
+            for (var j = 0; j < thumbs.length; j++) {
+                if (j === galeriIndex) {
+                    thumbs[j].classList.add('active');
+                } else {
+                    thumbs[j].classList.remove('active');
+                }
+            }
+        }
+
+        // ==================== GALERI AUTOPLAY ====================
+        function startGaleriAutoplay() {
+            if (galeriInterval) { clearInterval(galeriInterval); }
+            if (!videoPlaying) {
+                galeriInterval = setInterval(function() {
+                    if (!videoPlaying) { moveGaleri(1); }
+                }, 4000);
+            }
+        }
+
+        function stopGaleriAutoplay() {
+            if (galeriInterval) { clearInterval(galeriInterval); galeriInterval = null; }
         }
 
         // ============================================
@@ -2506,4 +2801,8 @@
         });
     </script>
 </body>
+</html>
+    
+  </body>
+  
 </html>
