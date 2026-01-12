@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>iframe tester</title>
+    <link rel="stylesheet" href="https://public.codepenassets.com/css/reset-2.0.min.css">
+
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Masjid Mekarindah</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1B5E20;
+            --primary-dark: #0D3D11;
+            --primary-light: #4CAF50;
+            --gold: #D4AF37;
+            --gold-light: #F4D03F;
+            --white: #FFFFFF;
+            --gray-light: #F5F5F5;
+            --gray: #666666;
+            --gray-dark: #333333;
+            --danger: #D32F2F;
+            --warning: #F57C00;
+            --success: #388E3C;
+            --info: #1976D2;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--gray-light);
+            min-height: 100vh;
+        }
+
+        /* ==================== LOGIN PAGE ==================== */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 20px;
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box .logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .login-box .logo i {
+            font-size: 2.5rem;
+            color: var(--gold);
+        }
+
+        .login-box h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .login-box p {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .login-box .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .login-box label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray-dark);
+            font-weight: 500;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-box button:hover {
+            background: var(--primary-dark);
+        }
+
+        .login-error {
+            background: #FFEBEE;
+            color: var(--danger);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* ==================== ADMIN LAYOUT ==================== */
+        .admin-container {
+            display: none;
+        }
+
+        .admin-container.active {
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h3 {
+            color: var(--white);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header span {
+            color: var(--gold);
+            font-size: 0.85rem;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Custom scrollbar untuk sidebar */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.15);
+            color: var(--gold);
+            border-left-color: var(--gold);
+        }
+
+        .nav-item i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 15px 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .topbar {
+            background: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .topbar h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-view-site {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            color: var(--white);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-view-site:hover {
+            background: var(--primary);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--danger);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #B71C1C;
+        }
+
+        /* Page Content */
+        .page-content {
+            padding: 30px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--white);
+        }
+
+        .stat-icon.green { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
+        .stat-icon.blue { background: linear-gradient(135deg, #2196F3, #1565C0); }
+        .stat-icon.orange { background: linear-gradient(135deg, #FF9800, #E65100); }
+        .stat-icon.purple { background: linear-gradient(135deg, #9C27B0, #6A1B9A); }
+        .stat-icon.gold { background: linear-gradient(135deg, #D4AF37, #B8860B); }
+        .stat-icon.teal { background: linear-gradient(135deg, #009688, #00695C); }
+        .stat-icon.pink { background: linear-gradient(135deg, #E91E63, #AD1457); }
+        .stat-icon.red { background: linear-gradient(135deg, #F44336, #C62828); }
+
+        .stat-info h4 {
+            font-size: 1.8rem;
+            color: var(--gray-dark);
+        }
+
+        .stat-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .card-header h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #E0E0E0;
+            color: var(--gray-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #BDBDBD;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        th {
+            background: var(--gray-light);
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background: #FAFAFA;
+        }
+
+        td .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        td.actions {
+            white-space: nowrap;
+        }
+
+        .image-preview-small {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #E8F5E9; color: var(--success); }
+        .badge-warning { background: #FFF3E0; color: var(--warning); }
+        .badge-danger { background: #FFEBEE; color: var(--danger); }
+        .badge-info { background: #E3F2FD; color: var(--info); }
+        .badge-secondary { background: #EEEEEE; color: var(--gray); }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray-dark);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #E0E0E0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Sidebar Overlay for Mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .topbar {
+                padding: 12px 15px;
+            }
+
+            .topbar h2 {
+                font-size: 1rem;
+            }
+
+            .btn-view-site span {
+                display: none;
+            }
+
+            .page-content {
+                padding: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+
+            .stat-info h4 {
+                font-size: 1.3rem;
+            }
+
+            .card-header {
+                padding: 15px;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                max-width: 100%;
+                margin: 10px;
+            }
+
+            /* Mobile Table Cards */
+            .table-mobile-cards table,
+            .table-mobile-cards thead,
+            .table-mobile-cards tbody,
+            .table-mobile-cards th,
+            .table-mobile-cards td,
+            .table-mobile-cards tr {
+                display: block;
+            }
+
+            .table-mobile-cards thead {
+                display: none;
+            }
+
+            .table-mobile-cards tr {
+                background: var(--white);
+                border: 1px solid #E0E0E0;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+
+            .table-mobile-cards td {
+                border: none;
+                padding: 8px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .table-mobile-cards td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--primary);
+                margin-right: 10px;
+            }
+
+            .table-mobile-cards td.actions {
+                justify-content: flex-end;
+                padding-top: 15px;
+                border-top: 1px solid #E0E0E0;
+                margin-top: 10px;
+            }
+
+            .table-mobile-cards td.actions::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .login-box {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Memuat data...</p>
+    </div>
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <div class="logo">
+                <i class="fas fa-mosque"></i>
+            </div>
+            <h2>Admin Panel</h2>
+            <p>Masjid Mekarindah</p>
+            <div class="login-error" id="loginError">
+                Username atau password salah!
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN PANEL ==================== -->
+    <div class="admin-container" id="adminPanel">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-mosque"></i> Masjid Mekarindah</h3>
+                <span>Admin Panel</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-item" data-page="tentang">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Tentang Masjid</span>
+                </a>
+                <a class="nav-item" data-page="pengurus">
+                    <i class="fas fa-users"></i>
+                    <span>Pengurus</span>
+                </a>
+                <a class="nav-item" data-page="jadwal-kajian">
+                    <i class="fas fa-book-reader"></i>
+                    <span>Jadwal Kajian</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a class="nav-item" data-page="keuangan">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Laporan Keuangan</span>
+                </a>
+                <a class="nav-item" data-page="zakat">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <span>Laporan Zakat</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a class="nav-item" data-page="kisah">
+                    <i class="fas fa-feather-alt"></i>
+                    <span>Kisah Inspiratif</span>
+                </a>
+                <a class="nav-item" data-page="galeri">
+                    <i class="fas fa-images"></i>
+                    <span>Galeri</span>
+                </a>
+                <a class="nav-item" data-page="serbasabi">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Serba Serbi</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="topbar-right">
+                    <a href="index.html" target="_blank" class="btn-view-site">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Lihat Website</span>
+                    </a>
+                    <button class="btn-logout" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- ==================== DASHBOARD PAGE ==================== -->
+                <section class="page-section active" id="page-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="statPengurus">0</h4>
+                                <p>Total Pengurus</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-book-reader"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="statKajian">0</h4>
+                                <p>Jadwal Kajian</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon gold">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="statKeuangan">0</h4>
+                                <p>Laporan Keuangan</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon teal">
+                                <i class="fas fa-hand-holding-heart"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="statZakat">0</h4>
+                                <p>Laporan Zakat</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon pink">
+                                <i class="fas fa-feather-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="statKisah">0</h4>
+                                <p>Kisah Inspiratif</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="statGaleri">0</h4>
+                                <p>Item Galeri</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="statSerbaSerbi">0</h4>
+                                <p>Serba Serbi</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-info-circle"></i> Panduan Singkat</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: var(--gray); line-height: 1.8;">
+                                Selamat datang di Admin Panel Masjid Mekarindah. Gunakan menu di samping kiri untuk mengelola konten website.
+                                Setiap perubahan akan langsung tersimpan ke database dan ditampilkan di website publik.
+                            </p>
+                            <ul style="margin-top: 15px; color: var(--gray); line-height: 2;">
+                                <li><strong>Tentang Masjid:</strong> Edit deskripsi, visi, dan misi masjid</li>
+                                <li><strong>Pengurus:</strong> Kelola data pengurus DKM, Yayasan, dan Majlis Ta'lim</li>
+                                <li><strong>Jadwal Kajian:</strong> Atur jadwal kajian rutin</li>
+                                <li><strong>Laporan Keuangan:</strong> Input saldo awal, pemasukan, dan pengeluaran</li>
+                                <li><strong>Laporan Zakat:</strong> Kelola data penerimaan dan distribusi zakat</li>
+                                <li><strong>Kisah Inspiratif:</strong> Tambah kisah-kisah inspiratif</li>
+                                <li><strong>Galeri:</strong> Upload foto dan video kegiatan</li>
+                                <li><strong>Serba Serbi:</strong> Kelola berita dan informasi terkini</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TENTANG MASJID PAGE ==================== -->
+                <section class="page-section" id="page-tentang">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-info-circle"></i> Tentang Masjid</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="formTentang" onsubmit="saveTentang(event)">
+                                <div class="form-group">
+                                    <label>Deskripsi Masjid</label>
+                                    <textarea id="tentangDeskripsi" rows="4"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Visi</label>
+                                    <textarea id="tentangVisi" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Misi (pisahkan dengan Enter untuk poin baru)</label>
+                                    <textarea id="tentangMisi" rows="5"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Simpan Perubahan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== PENGURUS PAGE ==================== -->
+                <section class="page-section" id="page-pengurus">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-users"></i> Data Pengurus</h3>
+                            <button class="btn btn-primary" onclick="openModalPengurus()">
+                                <i class="fas fa-plus"></i> Tambah Pengurus
+                            </button>
+                        </div>
+                        <div class="table-responsive table-mobile-cards">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Foto</th>
+                                        <th>Nama</th>
+                                        <th>Jabatan</th>
+                                        <th>Kategori</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyPengurus">
+                                    <tr><td colspan="5" style="text-align:center;padding:30px;color:#666;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== JADWAL KAJIAN PAGE ==================== -->
+                <section class="page-section" id="page-jadwal-kajian">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-book-reader"></i> Jadwal Kajian</h3>
+                            <button class="btn btn-primary" onclick="openModalKajian()">
+                                <i class="fas fa-plus"></i> Tambah Kajian
+                            </button>
+                        </div>
+                        <div class="table-responsive table-mobile-cards">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Hari</th>
+                                        <th>Waktu</th>
+                                        <th>Kajian</th>
+                                        <th>Pengisi</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyKajian">
+                                    <tr><td colspan="5" style="text-align:center;padding:30px;color:#666;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== KEUANGAN PAGE ==================== -->
+                <section class="page-section" id="page-keuangan">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-money-bill-wave"></i> Laporan Keuangan</h3>
+                            <button class="btn btn-primary" onclick="openModalKeuangan()">
+                                <i class="fas fa-plus"></i> Tambah Laporan
+                            </button>
+                        </div>
+                        <div class="table-responsive table-mobile-cards">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Periode</th>
+                                        <th>Saldo Awal</th>
+                                        <th>Pemasukan</th>
+                                        <th>Pengeluaran</th>
+                                        <th>Saldo Akhir</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyKeuangan">
+                                    <tr><td colspan="6" style="text-align:center;padding:30px;color:#666;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== ZAKAT PAGE ==================== -->
+                <section class="page-section" id="page-zakat">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-hand-holding-heart"></i> Laporan Zakat</h3>
+                            <button class="btn btn-primary" onclick="openModalZakat()">
+                                <i class="fas fa-plus"></i> Tambah Laporan
+                            </button>
+                        </div>
+                        <div class="table-responsive table-mobile-cards">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Periode</th>
+                                        <th>Saldo Awal</th>
+                                        <th>Penerimaan</th>
+                                        <th>Distribusi</th>
+                                        <th>Sisa</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyZakat">
+                                    <tr><td colspan="6" style="text-align:center;padding:30px;color:#666;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== KISAH INSPIRATIF PAGE ==================== -->
+                <section class="page-section" id="page-kisah">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-feather-alt"></i> Kisah Inspiratif</h3>
+                            <button class="btn btn-primary" onclick="openModalKisah()">
+                                <i class="fas fa-plus"></i> Tambah Kisah
+                            </button>
+                        </div>
+                        <div class="table-responsive table-mobile-cards">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Gambar</th>
+                                        <th>Judul</th>
+                                        <th>Penulis</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyKisah">
+                                    <tr><td colspan="4" style="text-align:center;padding:30px;color:#666;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== GALERI PAGE ==================== -->
+                <section class="page-section" id="page-galeri">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-images"></i> Galeri</h3>
+                            <button class="btn btn-primary" onclick="openModalGaleri()">
+                                <i class="fas fa-plus"></i> Tambah Item
+                            </button>
+                        </div>
+                        <div class="table-responsive table-mobile-cards">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Preview</th>
+                                        <th>Judul</th>
+                                        <th>Tipe</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyGaleri">
+                                    <tr><td colspan="4" style="text-align:center;padding:30px;color:#666;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== SERBA SERBI PAGE ==================== -->
+                <section class="page-section" id="page-serbasabi">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-newspaper"></i> Serba Serbi</h3>
+                            <button class="btn btn-primary" onclick="openModalSerbaSerbi()">
+                                <i class="fas fa-plus"></i> Tambah Berita
+                            </button>
+                        </div>
+                        <div class="table-responsive table-mobile-cards">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Gambar</th>
+                                        <th>Tanggal</th>
+                                        <th>Judul</th>
+                                        <th>Penting</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodySerbaSerbi">
+                                    <tr><td colspan="5" style="text-align:center;padding:30px;color:#666;">Belum ada data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== SETTINGS PAGE ==================== -->
+                <section class="page-section" id="page-settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-cog"></i> Pengaturan Umum</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="formSettings" onsubmit="saveSettings(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Nama Masjid</label>
+                                        <input type="text" id="settingNama">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>No. Rekening BSI</label>
+                                        <input type="text" id="settingRekening">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Alamat Lengkap</label>
+                                    <textarea id="settingAlamat" rows="2"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>URL Foto Masjid (Hero)</label>
+                                    <input type="url" id="settingFotoMasjid" placeholder="https://i.ibb.co/xxx/masjid.jpg">
+                                    <p class="form-hint">Upload foto di imgbb.com lalu paste linknya di sini</p>
+                                    <img src="" id="previewFotoMasjid" class="image-preview" style="display:none; margin-top:10px;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link Google Maps Embed</label>
+                                    <input type="url" id="settingMaps">
+                                    <p class="form-hint">Contoh: https://www.google.com/maps/embed?pb=...</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>URL Radio Streaming</label>
+                                    <input type="url" id="settingRadio">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Simpan Pengaturan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+    
+    <!-- Modal Pengurus -->
+    <div class="modal" id="modalPengurus">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalPengurusTitle">Tambah Pengurus</h3>
+                <button class="modal-close" onclick="closeModal('modalPengurus')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formPengurus" onsubmit="savePengurus(event)">
+                    <input type="hidden" id="pengurusIndex" value="-1">
+                    <div class="form-group">
+                        <label>Nama Lengkap *</label>
+                        <input type="text" id="pengurusNama" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Jabatan *</label>
+                            <input type="text" id="pengurusJabatan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kategori *</label>
+                            <select id="pengurusKategori" required>
+                                <option value="dkm">DKM</option>
+                                <option value="yayasan">Yayasan</option>
+                                <option value="majlistaklim">Majlis Ta'lim</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>URL Foto</label>
+                        <input type="url" id="pengurusFoto" placeholder="https://i.ibb.co/xxx/foto.jpg">
+                        <img src="" id="previewPengurusFoto" class="image-preview" style="display:none;">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalPengurus')">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Kajian -->
+    <div class="modal" id="modalKajian">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalKajianTitle">Tambah Kajian</h3>
+                <button class="modal-close" onclick="closeModal('modalKajian')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formKajian" onsubmit="saveKajian(event)">
+                    <input type="hidden" id="kajianIndex" value="-1">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hari *</label>
+                            <select id="kajianHari" required>
+                                <option value="Senin">Senin</option>
+                                <option value="Selasa">Selasa</option>
+                                <option value="Rabu">Rabu</option>
+                                <option value="Kamis">Kamis</option>
+                                <option value="Jumat">Jumat</option>
+                                <option value="Sabtu">Sabtu</option>
+                                <option value="Ahad">Ahad</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Waktu *</label>
+                            <input type="text" id="kajianWaktu" placeholder="Ba'da Subuh" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Kajian *</label>
+                        <input type="text" id="kajianNama" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Pengisi / Ustadz *</label>
+                        <input type="text" id="kajianPengisi" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Link Video/Audio (opsional)</label>
+                        <input type="url" id="kajianLink" placeholder="https://youtube.com/...">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalKajian')">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Keuangan -->
+    <div class="modal" id="modalKeuangan">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalKeuanganTitle">Tambah Laporan Keuangan</h3>
+                <button class="modal-close" onclick="closeModal('modalKeuangan')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formKeuangan" onsubmit="saveKeuangan(event)">
+                    <input type="hidden" id="keuanganIndex" value="-1">
+                    <div class="form-group">
+                        <label>Periode (contoh: Januari 2025) *</label>
+                        <input type="text" id="keuanganPeriode" required>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Saldo Awal (Rp) *</label>
+                            <input type="number" id="keuanganSaldoAwal" required value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Pemasukan (Rp) *</label>
+                            <input type="number" id="keuanganPemasukan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Pengeluaran (Rp) *</label>
+                            <input type="number" id="keuanganPengeluaran" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Detail Pemasukan (pisahkan dengan Enter)</label>
+                        <textarea id="keuanganDetailMasuk" rows="3" placeholder="Infaq Jumat: 5000000&#10;Donatur: 2000000"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Detail Pengeluaran (pisahkan dengan Enter)</label>
+                        <textarea id="keuanganDetailKeluar" rows="3" placeholder="Listrik: 500000&#10;Kebersihan: 300000"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalKeuangan')">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Zakat -->
+    <div class="modal" id="modalZakat">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalZakatTitle">Tambah Laporan Zakat</h3>
+                <button class="modal-close" onclick="closeModal('modalZakat')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formZakat" onsubmit="saveZakat(event)">
+                    <input type="hidden" id="zakatIndex" value="-1">
+                    <div class="form-group">
+                        <label>Periode (contoh: Ramadhan 1446 H) *</label>
+                        <input type="text" id="zakatPeriode" required>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Saldo Awal (Rp) *</label>
+                            <input type="number" id="zakatSaldoAwal" required value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Penerimaan (Rp) *</label>
+                            <input type="number" id="zakatPenerimaan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Distribusi (Rp) *</label>
+                            <input type="number" id="zakatDistribusi" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Detail Penerimaan (pisahkan dengan Enter)</label>
+                        <textarea id="zakatDetailTerima" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Detail Distribusi (pisahkan dengan Enter)</label>
+                        <textarea id="zakatDetailSalur" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalZakat')">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Kisah -->
+    <div class="modal" id="modalKisah">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalKisahTitle">Tambah Kisah</h3>
+                <button class="modal-close" onclick="closeModal('modalKisah')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formKisah" onsubmit="saveKisah(event)">
+                    <input type="hidden" id="kisahIndex" value="-1">
+                    <div class="form-group">
+                        <label>Judul *</label>
+                        <input type="text" id="kisahJudul" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Penulis / Sumber</label>
+                        <input type="text" id="kisahPenulis" placeholder="Anonim">
+                    </div>
+                    <div class="form-group">
+                        <label>URL Gambar</label>
+                        <input type="url" id="kisahGambar" placeholder="https://i.ibb.co/xxx/gambar.jpg">
+                        <img src="" id="previewKisahGambar" class="image-preview" style="display:none;">
+                    </div>
+                    <div class="form-group">
+                        <label>Isi Kisah *</label>
+                        <textarea id="kisahIsi" rows="6" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalKisah')">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Galeri -->
+    <div class="modal" id="modalGaleri">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalGaleriTitle">Tambah Item Galeri</h3>
+                <button class="modal-close" onclick="closeModal('modalGaleri')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formGaleri" onsubmit="saveGaleri(event)">
+                    <input type="hidden" id="galeriIndex" value="-1">
+                    <div class="form-group">
+                        <label>Judul *</label>
+                        <input type="text" id="galeriJudul" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe *</label>
+                        <select id="galeriTipe" required>
+                            <option value="foto">Foto</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="instagram">Instagram Reels</option>
+                            <option value="tiktok">TikTok</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>URL *</label>
+                        <input type="url" id="galeriUrl" required placeholder="URL gambar atau video">
+                        <p class="form-hint">Foto: link imgbb | YouTube: link video | Instagram/TikTok: link post</p>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalGaleri')">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Serba Serbi -->
+    <div class="modal" id="modalSerbaSerbi">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalSerbaSerbiTitle">Tambah Berita</h3>
+                <button class="modal-close" onclick="closeModal('modalSerbaSerbi')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSerbaSerbi" onsubmit="saveSerbaSerbi(event)">
+                    <input type="hidden" id="serbaSerbiIndex" value="-1">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tanggal *</label>
+                            <input type="date" id="serbaSerbiTanggal" required>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <div class="checkbox-wrapper" style="padding-top:8px;">
+                                <input type="checkbox" id="serbaSerbiPenting">
+                                <label for="serbaSerbiPenting" style="margin:0; cursor:pointer;">Tandai sebagai Penting</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Judul *</label>
+                        <input type="text" id="serbaSerbiJudul" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL Gambar</label>
+                        <input type="url" id="serbaSerbiGambar" placeholder="https://i.ibb.co/xxx/gambar.jpg" onchange="previewSerbaSerbiImage()">
+                        <p class="form-hint">Upload gambar di imgbb.com, lalu paste link-nya di sini</p>
+                        <img src="" id="previewSerbaSerbiGambar" class="image-preview" style="display:none;">
+                    </div>
+                    <div class="form-group">
+                        <label>Isi Berita *</label>
+                        <textarea id="serbaSerbiIsi" rows="5" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalSerbaSerbi')">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ==================== CONFIG ====================
+        var CONFIG = {
+            BIN_ID: '69642e2fae596e708fd58127',
+            API_KEY: '$2a$10$mu94DGoU.bNfbEUgWcjffueeAaIQfeb2hMzp.TM.Tg6M8JiaUOIVm',
+            USERNAME: 'admin',
+            PASSWORD: 'mekarindah2025'
+        };
+
+        var siteData = {};
+
+        // ==================== AUTH ====================
+        function handleLogin(e) {
+            e.preventDefault();
+            var username = document.getElementById('loginUsername').value;
+            var password = document.getElementById('loginPassword').value;
+
+            if (username === CONFIG.USERNAME && password === CONFIG.PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminPanel').classList.add('active');
+                loadData();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Yakin ingin logout?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                location.reload();
+            }
+        }
+
+        function checkAuth() {
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminPanel').classList.add('active');
+                loadData();
+            }
+        }
+
+        // ==================== DATA MANAGEMENT ====================
+        async function loadData() {
+            showLoading(true);
+            try {
+                var response = await fetch('https://api.jsonbin.io/v3/b/' + CONFIG.BIN_ID + '/latest', {
+                    headers: { 'X-Master-Key': CONFIG.API_KEY }
+                });
+                var result = await response.json();
+                siteData = result.record || {};
+                initializeData();
+                renderAll();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Gagal memuat data!');
+            }
+            showLoading(false);
+        }
+
+        async function saveData() {
+            showLoading(true);
+            try {
+                var response = await fetch('https://api.jsonbin.io/v3/b/' + CONFIG.BIN_ID, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': CONFIG.API_KEY
+                    },
+                    body: JSON.stringify(siteData)
+                });
+                showLoading(false);
+                return response.ok;
+            } catch (error) {
+                console.error('Error saving data:', error);
+                showLoading(false);
+                alert('Gagal menyimpan data!');
+                return false;
+            }
+        }
+
+        function initializeData() {
+            if (!siteData.tentang) siteData.tentang = { deskripsi: '', visi: '', misi: [] };
+            if (!siteData.pengurus) siteData.pengurus = [];
+            if (!siteData.jadwalKajian) siteData.jadwalKajian = [];
+            if (!siteData.keuangan) siteData.keuangan = [];
+            if (!siteData.zakat) siteData.zakat = [];
+            if (!siteData.kisah) siteData.kisah = [];
+            if (!siteData.galeri) siteData.galeri = [];
+            if (!siteData.serbaSerbi) siteData.serbaSerbi = [];
+            if (!siteData.settings) siteData.settings = {};
+        }
+
+        function renderAll() {
+            renderDashboard();
+            renderTentang();
+            renderPengurus();
+            renderKajian();
+            renderKeuangan();
+            renderZakat();
+            renderKisah();
+            renderGaleri();
+            renderSerbaSerbi();
+            renderSettings();
+        }
+
+        // ==================== UTILITY ====================
+        function showLoading(show) {
+            var overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.add('show');
+            } else {
+                overlay.classList.remove('show');
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function formatCurrency(num) {
+            return 'Rp ' + (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            var date = new Date(dateStr);
+            var options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // ==================== NAVIGATION ====================
+        document.querySelectorAll('.nav-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var page = this.getAttribute('data-page');
+                
+                document.querySelectorAll('.nav-item').forEach(function(nav) {
+                    nav.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                document.querySelectorAll('.page-section').forEach(function(section) {
+                    section.classList.remove('active');
+                });
+                document.getElementById('page-' + page).classList.add('active');
+
+                document.getElementById('pageTitle').textContent = this.querySelector('span').textContent;
+
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // ==================== DASHBOARD ====================
+        function renderDashboard() {
+            document.getElementById('statPengurus').textContent = siteData.pengurus ? siteData.pengurus.length : 0;
+            document.getElementById('statKajian').textContent = siteData.jadwalKajian ? siteData.jadwalKajian.length : 0;
+            document.getElementById('statKeuangan').textContent = siteData.keuangan ? siteData.keuangan.length : 0;
+            document.getElementById('statZakat').textContent = siteData.zakat ? siteData.zakat.length : 0;
+            document.getElementById('statKisah').textContent = siteData.kisah ? siteData.kisah.length : 0;
+            document.getElementById('statGaleri').textContent = siteData.galeri ? siteData.galeri.length : 0;
+            document.getElementById('statSerbaSerbi').textContent = siteData.serbaSerbi ? siteData.serbaSerbi.length : 0;
+        }
+
+        // ==================== TENTANG ====================
+        function renderTentang() {
+            var tentang = siteData.tentang || {};
+            document.getElementById('tentangDeskripsi').value = tentang.deskripsi || '';
+            document.getElementById('tentangVisi').value = tentang.visi || '';
+            document.getElementById('tentangMisi').value = (tentang.misi || []).join('\n');
+        }
+
+        async function saveTentang(e) {
+            e.preventDefault();
+            siteData.tentang = {
+                deskripsi: document.getElementById('tentangDeskripsi').value,
+                visi: document.getElementById('tentangVisi').value,
+                misi: document.getElementById('tentangMisi').value.split('\n').filter(function(m) { return m.trim(); })
+            };
+            var success = await saveData();
+            if (success) alert('Data berhasil disimpan!');
+        }
+
+        // ==================== PENGURUS ====================
+        function renderPengurus() {
+            var tbody = document.getElementById('tbodyPengurus');
+            if (!siteData.pengurus || siteData.pengurus.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#666;">Belum ada data</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < siteData.pengurus.length; i++) {
+                var p = siteData.pengurus[i];
+                var foto = p.foto ? '<img src="' + p.foto + '" class="image-preview-small">' : '<i class="fas fa-user" style="font-size:1.5rem;color:#ccc;"></i>';
+                var kategoriLabel = p.kategori === 'yayasan' ? 'Yayasan' : (p.kategori === 'majlistaklim' ? 'Majlis Ta\'lim' : 'DKM');
+                
+                html += '<tr>';
+                html += '<td data-label="Foto">' + foto + '</td>';
+                html += '<td data-label="Nama">' + p.nama + '</td>';
+                html += '<td data-label="Jabatan">' + p.jabatan + '</td>';
+                html += '<td data-label="Kategori"><span class="badge badge-info">' + kategoriLabel + '</span></td>';
+                html += '<td data-label="Aksi" class="actions">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editPengurus(' + i + ')"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deletePengurus(' + i + ')"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function openModalPengurus() {
+            document.getElementById('modalPengurusTitle').textContent = 'Tambah Pengurus';
+            document.getElementById('formPengurus').reset();
+            document.getElementById('pengurusIndex').value = '-1';
+            document.getElementById('previewPengurusFoto').style.display = 'none';
+            openModal('modalPengurus');
+        }
+
+        function editPengurus(index) {
+            var p = siteData.pengurus[index];
+            document.getElementById('modalPengurusTitle').textContent = 'Edit Pengurus';
+            document.getElementById('pengurusIndex').value = index;
+            document.getElementById('pengurusNama').value = p.nama;
+            document.getElementById('pengurusJabatan').value = p.jabatan;
+            document.getElementById('pengurusKategori').value = p.kategori || 'dkm';
+            document.getElementById('pengurusFoto').value = p.foto || '';
+            
+            var preview = document.getElementById('previewPengurusFoto');
+            if (p.foto) {
+                preview.src = p.foto;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+            openModal('modalPengurus');
+        }
+
+        async function savePengurus(e) {
+            e.preventDefault();
+            var index = parseInt(document.getElementById('pengurusIndex').value);
+            var data = {
+                nama: document.getElementById('pengurusNama').value,
+                jabatan: document.getElementById('pengurusJabatan').value,
+                kategori: document.getElementById('pengurusKategori').value,
+                foto: document.getElementById('pengurusFoto').value
+            };
+
+            if (index === -1) {
+                siteData.pengurus.push(data);
+            } else {
+                siteData.pengurus[index] = data;
+            }
+
+            var success = await saveData();
+            if (success) {
+                closeModal('modalPengurus');
+                renderPengurus();
+                renderDashboard();
+                alert('Data berhasil disimpan!');
+            }
+        }
+
+        async function deletePengurus(index) {
+            if (!confirm('Hapus pengurus ini?')) return;
+            siteData.pengurus.splice(index, 1);
+            var success = await saveData();
+            if (success) {
+                renderPengurus();
+                renderDashboard();
+            }
+        }
+
+        // ==================== KAJIAN ====================
+        function renderKajian() {
+            var tbody = document.getElementById('tbodyKajian');
+            if (!siteData.jadwalKajian || siteData.jadwalKajian.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#666;">Belum ada data</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < siteData.jadwalKajian.length; i++) {
+                var k = siteData.jadwalKajian[i];
+                var linkIcon = k.link ? '<a href="' + k.link + '" target="_blank" class="btn btn-info btn-sm" style="margin-left:5px;"><i class="fas fa-play"></i></a>' : '';
+                
+                html += '<tr>';
+                html += '<td data-label="Hari">' + k.hari + '</td>';
+                html += '<td data-label="Waktu">' + k.waktu + '</td>';
+                html += '<td data-label="Kajian">' + k.nama + '</td>';
+                html += '<td data-label="Pengisi">' + k.pengisi + linkIcon + '</td>';
+                html += '<td data-label="Aksi" class="actions">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editKajian(' + i + ')"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deleteKajian(' + i + ')"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function openModalKajian() {
+            document.getElementById('modalKajianTitle').textContent = 'Tambah Kajian';
+            document.getElementById('formKajian').reset();
+            document.getElementById('kajianIndex').value = '-1';
+            openModal('modalKajian');
+        }
+
+        function editKajian(index) {
+            var k = siteData.jadwalKajian[index];
+            document.getElementById('modalKajianTitle').textContent = 'Edit Kajian';
+            document.getElementById('kajianIndex').value = index;
+            document.getElementById('kajianHari').value = k.hari;
+            document.getElementById('kajianWaktu').value = k.waktu;
+            document.getElementById('kajianNama').value = k.nama;
+            document.getElementById('kajianPengisi').value = k.pengisi;
+            document.getElementById('kajianLink').value = k.link || '';
+            openModal('modalKajian');
+        }
+
+        async function saveKajian(e) {
+            e.preventDefault();
+            var index = parseInt(document.getElementById('kajianIndex').value);
+            var data = {
+                hari: document.getElementById('kajianHari').value,
+                waktu: document.getElementById('kajianWaktu').value,
+                nama: document.getElementById('kajianNama').value,
+                pengisi: document.getElementById('kajianPengisi').value,
+                link: document.getElementById('kajianLink').value
+            };
+
+            if (index === -1) {
+                siteData.jadwalKajian.push(data);
+            } else {
+                siteData.jadwalKajian[index] = data;
+            }
+
+            var success = await saveData();
+            if (success) {
+                closeModal('modalKajian');
+                renderKajian();
+                renderDashboard();
+                alert('Data berhasil disimpan!');
+            }
+        }
+
+        async function deleteKajian(index) {
+            if (!confirm('Hapus kajian ini?')) return;
+            siteData.jadwalKajian.splice(index, 1);
+            var success = await saveData();
+            if (success) {
+                renderKajian();
+                renderDashboard();
+            }
+        }
+
+        // ==================== KEUANGAN (DENGAN SALDO AWAL) ====================
+        function renderKeuangan() {
+            var tbody = document.getElementById('tbodyKeuangan');
+            if (!siteData.keuangan || siteData.keuangan.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#666;">Belum ada data</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < siteData.keuangan.length; i++) {
+                var k = siteData.keuangan[i];
+                var saldoAwal = k.saldoAwal || 0;
+                var pemasukan = k.pemasukan || 0;
+                var pengeluaran = k.pengeluaran || 0;
+                var saldoAkhir = saldoAwal + pemasukan - pengeluaran;
+                
+                html += '<tr>';
+                html += '<td data-label="Periode">' + k.periode + '</td>';
+                html += '<td data-label="Saldo Awal" style="color:var(--info);">' + formatCurrency(saldoAwal) + '</td>';
+                html += '<td data-label="Pemasukan" style="color:var(--success);">' + formatCurrency(pemasukan) + '</td>';
+                html += '<td data-label="Pengeluaran" style="color:var(--danger);">' + formatCurrency(pengeluaran) + '</td>';
+                html += '<td data-label="Saldo Akhir"><strong>' + formatCurrency(saldoAkhir) + '</strong></td>';
+                html += '<td data-label="Aksi" class="actions">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editKeuangan(' + i + ')"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deleteKeuangan(' + i + ')"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function openModalKeuangan() {
+            document.getElementById('modalKeuanganTitle').textContent = 'Tambah Laporan Keuangan';
+            document.getElementById('formKeuangan').reset();
+            document.getElementById('keuanganIndex').value = '-1';
+            document.getElementById('keuanganSaldoAwal').value = '0';
+            openModal('modalKeuangan');
+        }
+
+        function editKeuangan(index) {
+            var k = siteData.keuangan[index];
+            document.getElementById('modalKeuanganTitle').textContent = 'Edit Laporan Keuangan';
+            document.getElementById('keuanganIndex').value = index;
+            document.getElementById('keuanganPeriode').value = k.periode;
+            document.getElementById('keuanganSaldoAwal').value = k.saldoAwal || 0;
+            document.getElementById('keuanganPemasukan').value = k.pemasukan;
+            document.getElementById('keuanganPengeluaran').value = k.pengeluaran;
+            document.getElementById('keuanganDetailMasuk').value = (k.detailMasuk || []).join('\n');
+            document.getElementById('keuanganDetailKeluar').value = (k.detailKeluar || []).join('\n');
+            openModal('modalKeuangan');
+        }
+
+        async function saveKeuangan(e) {
+            e.preventDefault();
+            var index = parseInt(document.getElementById('keuanganIndex').value);
+            var data = {
+                periode: document.getElementById('keuanganPeriode').value,
+                saldoAwal: parseInt(document.getElementById('keuanganSaldoAwal').value) || 0,
+                pemasukan: parseInt(document.getElementById('keuanganPemasukan').value) || 0,
+                pengeluaran: parseInt(document.getElementById('keuanganPengeluaran').value) || 0,
+                detailMasuk: document.getElementById('keuanganDetailMasuk').value.split('\n').filter(function(d) { return d.trim(); }),
+                detailKeluar: document.getElementById('keuanganDetailKeluar').value.split('\n').filter(function(d) { return d.trim(); })
+            };
+
+            if (index === -1) {
+                siteData.keuangan.push(data);
+            } else {
+                siteData.keuangan[index] = data;
+            }
+
+            var success = await saveData();
+            if (success) {
+                closeModal('modalKeuangan');
+                renderKeuangan();
+                renderDashboard();
+                alert('Data berhasil disimpan!');
+            }
+        }
+
+        async function deleteKeuangan(index) {
+            if (!confirm('Hapus laporan ini?')) return;
+            siteData.keuangan.splice(index, 1);
+            var success = await saveData();
+            if (success) {
+                renderKeuangan();
+                renderDashboard();
+            }
+        }
+
+        // ==================== ZAKAT (DENGAN SALDO AWAL) ====================
+        function renderZakat() {
+            var tbody = document.getElementById('tbodyZakat');
+            if (!siteData.zakat || siteData.zakat.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#666;">Belum ada data</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < siteData.zakat.length; i++) {
+                var z = siteData.zakat[i];
+                var saldoAwal = z.saldoAwal || 0;
+                var penerimaan = z.penerimaan || 0;
+                var distribusi = z.distribusi || 0;
+                var sisa = saldoAwal + penerimaan - distribusi;
+                
+                html += '<tr>';
+                html += '<td data-label="Periode">' + z.periode + '</td>';
+                html += '<td data-label="Saldo Awal" style="color:var(--info);">' + formatCurrency(saldoAwal) + '</td>';
+                html += '<td data-label="Penerimaan" style="color:var(--success);">' + formatCurrency(penerimaan) + '</td>';
+                html += '<td data-label="Distribusi" style="color:var(--warning);">' + formatCurrency(distribusi) + '</td>';
+                html += '<td data-label="Sisa"><strong>' + formatCurrency(sisa) + '</strong></td>';
+                html += '<td data-label="Aksi" class="actions">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editZakat(' + i + ')"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deleteZakat(' + i + ')"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function openModalZakat() {
+            document.getElementById('modalZakatTitle').textContent = 'Tambah Laporan Zakat';
+            document.getElementById('formZakat').reset();
+            document.getElementById('zakatIndex').value = '-1';
+            document.getElementById('zakatSaldoAwal').value = '0';
+            openModal('modalZakat');
+        }
+
+        function editZakat(index) {
+            var z = siteData.zakat[index];
+            document.getElementById('modalZakatTitle').textContent = 'Edit Laporan Zakat';
+            document.getElementById('zakatIndex').value = index;
+            document.getElementById('zakatPeriode').value = z.periode;
+            document.getElementById('zakatSaldoAwal').value = z.saldoAwal || 0;
+            document.getElementById('zakatPenerimaan').value = z.penerimaan;
+            document.getElementById('zakatDistribusi').value = z.distribusi;
+            document.getElementById('zakatDetailTerima').value = (z.detailTerima || []).join('\n');
+            document.getElementById('zakatDetailSalur').value = (z.detailSalur || []).join('\n');
+            openModal('modalZakat');
+        }
+
+        async function saveZakat(e) {
+            e.preventDefault();
+            var index = parseInt(document.getElementById('zakatIndex').value);
+            var data = {
+                periode: document.getElementById('zakatPeriode').value,
+                saldoAwal: parseInt(document.getElementById('zakatSaldoAwal').value) || 0,
+                penerimaan: parseInt(document.getElementById('zakatPenerimaan').value) || 0,
+                distribusi: parseInt(document.getElementById('zakatDistribusi').value) || 0,
+                detailTerima: document.getElementById('zakatDetailTerima').value.split('\n').filter(function(d) { return d.trim(); }),
+                detailSalur: document.getElementById('zakatDetailSalur').value.split('\n').filter(function(d) { return d.trim(); })
+            };
+
+            if (index === -1) {
+                siteData.zakat.push(data);
+            } else {
+                siteData.zakat[index] = data;
+            }
+
+            var success = await saveData();
+            if (success) {
+                closeModal('modalZakat');
+                renderZakat();
+                renderDashboard();
+                alert('Data berhasil disimpan!');
+            }
+        }
+
+        async function deleteZakat(index) {
+            if (!confirm('Hapus laporan ini?')) return;
+            siteData.zakat.splice(index, 1);
+            var success = await saveData();
+            if (success) {
+                renderZakat();
+                renderDashboard();
+            }
+        }
+
+        // ==================== KISAH ====================
+        function renderKisah() {
+            var tbody = document.getElementById('tbodyKisah');
+            if (!siteData.kisah || siteData.kisah.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#666;">Belum ada data</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < siteData.kisah.length; i++) {
+                var k = siteData.kisah[i];
+                var gambar = k.gambar ? '<img src="' + k.gambar + '" class="image-preview-small">' : '<i class="fas fa-image" style="font-size:1.5rem;color:#ccc;"></i>';
+                
+                html += '<tr>';
+                html += '<td data-label="Gambar">' + gambar + '</td>';
+                html += '<td data-label="Judul">' + k.judul + '</td>';
+                html += '<td data-label="Penulis">' + (k.penulis || 'Anonim') + '</td>';
+                html += '<td data-label="Aksi" class="actions">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editKisah(' + i + ')"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deleteKisah(' + i + ')"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function openModalKisah() {
+            document.getElementById('modalKisahTitle').textContent = 'Tambah Kisah';
+            document.getElementById('formKisah').reset();
+            document.getElementById('kisahIndex').value = '-1';
+            document.getElementById('previewKisahGambar').style.display = 'none';
+            openModal('modalKisah');
+        }
+
+        function editKisah(index) {
+            var k = siteData.kisah[index];
+            document.getElementById('modalKisahTitle').textContent = 'Edit Kisah';
+            document.getElementById('kisahIndex').value = index;
+            document.getElementById('kisahJudul').value = k.judul;
+            document.getElementById('kisahPenulis').value = k.penulis || '';
+            document.getElementById('kisahGambar').value = k.gambar || '';
+            document.getElementById('kisahIsi').value = k.isi || '';
+            
+            var preview = document.getElementById('previewKisahGambar');
+            if (k.gambar) {
+                preview.src = k.gambar;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+            openModal('modalKisah');
+        }
+
+        async function saveKisah(e) {
+            e.preventDefault();
+            var index = parseInt(document.getElementById('kisahIndex').value);
+            var data = {
+                judul: document.getElementById('kisahJudul').value,
+                penulis: document.getElementById('kisahPenulis').value || 'Anonim',
+                gambar: document.getElementById('kisahGambar').value,
+                isi: document.getElementById('kisahIsi').value
+            };
+
+            if (index === -1) {
+                siteData.kisah.push(data);
+            } else {
+                siteData.kisah[index] = data;
+            }
+
+            var success = await saveData();
+            if (success) {
+                closeModal('modalKisah');
+                renderKisah();
+                renderDashboard();
+                alert('Data berhasil disimpan!');
+            }
+        }
+
+        async function deleteKisah(index) {
+            if (!confirm('Hapus kisah ini?')) return;
+            siteData.kisah.splice(index, 1);
+            var success = await saveData();
+            if (success) {
+                renderKisah();
+                renderDashboard();
+            }
+        }
+
+        // ==================== GALERI ====================
+        function renderGaleri() {
+            var tbody = document.getElementById('tbodyGaleri');
+            if (!siteData.galeri || siteData.galeri.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#666;">Belum ada data</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < siteData.galeri.length; i++) {
+                var g = siteData.galeri[i];
+                var preview = '';
+                if (g.tipe === 'foto') {
+                    preview = '<img src="' + g.url + '" class="image-preview-small">';
+                } else {
+                    var icon = g.tipe === 'youtube' ? 'fab fa-youtube' : (g.tipe === 'instagram' ? 'fab fa-instagram' : 'fab fa-tiktok');
+                    var color = g.tipe === 'youtube' ? '#FF0000' : (g.tipe === 'instagram' ? '#E4405F' : '#000000');
+                    preview = '<i class="' + icon + '" style="font-size:1.8rem;color:' + color + ';"></i>';
+                }
+                
+                var tipeLabel = g.tipe.charAt(0).toUpperCase() + g.tipe.slice(1);
+                
+                html += '<tr>';
+                html += '<td data-label="Preview">' + preview + '</td>';
+                html += '<td data-label="Judul">' + g.judul + '</td>';
+                html += '<td data-label="Tipe"><span class="badge badge-info">' + tipeLabel + '</span></td>';
+                html += '<td data-label="Aksi" class="actions">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editGaleri(' + i + ')"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deleteGaleri(' + i + ')"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function openModalGaleri() {
+            document.getElementById('modalGaleriTitle').textContent = 'Tambah Item Galeri';
+            document.getElementById('formGaleri').reset();
+            document.getElementById('galeriIndex').value = '-1';
+            openModal('modalGaleri');
+        }
+
+        function editGaleri(index) {
+            var g = siteData.galeri[index];
+            document.getElementById('modalGaleriTitle').textContent = 'Edit Item Galeri';
+            document.getElementById('galeriIndex').value = index;
+            document.getElementById('galeriJudul').value = g.judul;
+            document.getElementById('galeriTipe').value = g.tipe;
+            document.getElementById('galeriUrl').value = g.url;
+            openModal('modalGaleri');
+        }
+
+        async function saveGaleri(e) {
+            e.preventDefault();
+            var index = parseInt(document.getElementById('galeriIndex').value);
+            var data = {
+                judul: document.getElementById('galeriJudul').value,
+                tipe: document.getElementById('galeriTipe').value,
+                url: document.getElementById('galeriUrl').value
+            };
+
+            if (index === -1) {
+                siteData.galeri.push(data);
+            } else {
+                siteData.galeri[index] = data;
+            }
+
+            var success = await saveData();
+            if (success) {
+                closeModal('modalGaleri');
+                renderGaleri();
+                renderDashboard();
+                alert('Data berhasil disimpan!');
+            }
+        }
+
+        async function deleteGaleri(index) {
+            if (!confirm('Hapus item ini?')) return;
+            siteData.galeri.splice(index, 1);
+            var success = await saveData();
+            if (success) {
+                renderGaleri();
+                renderDashboard();
+            }
+        }
+
+        // ==================== SERBA SERBI ====================
+        function renderSerbaSerbi() {
+            var tbody = document.getElementById('tbodySerbaSerbi');
+            if (!tbody) return;
+            
+            if (!siteData.serbaSerbi || siteData.serbaSerbi.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#666;"><i class="fas fa-newspaper" style="font-size:2rem;margin-bottom:10px;display:block;opacity:0.5;"></i>Belum ada data</td></tr>';
+                return;
+            }
+
+            var sorted = siteData.serbaSerbi.slice().sort(function(a, b) {
+                return new Date(b.tanggal) - new Date(a.tanggal);
+            });
+            
+            var html = '';
+            for (var i = 0; i < sorted.length; i++) {
+                var item = sorted[i];
+                var realIndex = siteData.serbaSerbi.indexOf(item);
+                var tanggal = formatDate(item.tanggal);
+                var gambarSrc = item.gambar ? item.gambar : 'https://via.placeholder.com/50x50?text=No';
+                var pentingBadge = item.penting ? '<span class="badge badge-danger">PENTING</span>' : '<span class="badge badge-secondary">Biasa</span>';
+                
+                html += '<tr>';
+                html += '<td data-label="Gambar"><img src="' + gambarSrc + '" class="image-preview-small" style="border-radius:5px;"></td>';
+                html += '<td data-label="Tanggal">' + tanggal + '</td>';
+                html += '<td data-label="Judul">' + item.judul + '</td>';
+                html += '<td data-label="Penting">' + pentingBadge + '</td>';
+                html += '<td data-label="Aksi" class="actions">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editSerbaSerbi(' + realIndex + ')"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deleteSerbaSerbi(' + realIndex + ')"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function openModalSerbaSerbi() {
+            document.getElementById('modalSerbaSerbiTitle').textContent = 'Tambah Berita';
+            document.getElementById('formSerbaSerbi').reset();
+            document.getElementById('serbaSerbiIndex').value = '-1';
+            document.getElementById('serbaSerbiTanggal').value = new Date().toISOString().split('T')[0];
+            document.getElementById('previewSerbaSerbiGambar').style.display = 'none';
+            openModal('modalSerbaSerbi');
+        }
+
+        function editSerbaSerbi(index) {
+            var item = siteData.serbaSerbi[index];
+            document.getElementById('modalSerbaSerbiTitle').textContent = 'Edit Berita';
+            document.getElementById('serbaSerbiIndex').value = index;
+            document.getElementById('serbaSerbiTanggal').value = item.tanggal;
+            document.getElementById('serbaSerbiJudul').value = item.judul;
+            document.getElementById('serbaSerbiGambar').value = item.gambar || '';
+            document.getElementById('serbaSerbiIsi').value = item.isi;
+            document.getElementById('serbaSerbiPenting').checked = item.penting ? true : false;
+            
+            var previewEl = document.getElementById('previewSerbaSerbiGambar');
+            if (item.gambar) {
+                previewEl.src = item.gambar;
+                previewEl.style.display = 'block';
+            } else {
+                previewEl.style.display = 'none';
+            }
+            
+            openModal('modalSerbaSerbi');
+        }
+
+        function previewSerbaSerbiImage() {
+            var url = document.getElementById('serbaSerbiGambar').value;
+            var previewEl = document.getElementById('previewSerbaSerbiGambar');
+            if (url) {
+                previewEl.src = url;
+                previewEl.style.display = 'block';
+            } else {
+                previewEl.style.display = 'none';
+            }
+        }
+
+        async function saveSerbaSerbi(e) {
+            e.preventDefault();
+            
+            var index = parseInt(document.getElementById('serbaSerbiIndex').value);
+            var item = {
+                tanggal: document.getElementById('serbaSerbiTanggal').value,
+                judul: document.getElementById('serbaSerbiJudul').value,
+                gambar: document.getElementById('serbaSerbiGambar').value,
+                isi: document.getElementById('serbaSerbiIsi').value,
+                penting: document.getElementById('serbaSerbiPenting').checked
+            };
+
+            if (!siteData.serbaSerbi) {
+                siteData.serbaSerbi = [];
+            }
+
+            if (index === -1) {
+                siteData.serbaSerbi.push(item);
+            } else {
+                siteData.serbaSerbi[index] = item;
+            }
+
+            var success = await saveData();
+            if (success) {
+                closeModal('modalSerbaSerbi');
+                renderSerbaSerbi();
+                renderDashboard();
+                alert('Data berhasil disimpan!');
+            }
+        }
+
+        async function deleteSerbaSerbi(index) {
+            if (!confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
+            
+            siteData.serbaSerbi.splice(index, 1);
+            var success = await saveData();
+            if (success) {
+                renderSerbaSerbi();
+                renderDashboard();
+            }
+        }
+
+        // ==================== SETTINGS ====================
+        function renderSettings() {
+            var s = siteData.settings || {};
+            document.getElementById('settingNama').value = s.nama || 'Masjid Mekarindah';
+            document.getElementById('settingAlamat').value = s.alamat || '';
+            document.getElementById('settingRekening').value = s.rekening || '';
+            document.getElementById('settingMaps').value = s.maps || '';
+            document.getElementById('settingRadio').value = s.radio || '';
+            document.getElementById('settingFotoMasjid').value = s.fotoMasjid || '';
+            
+            var preview = document.getElementById('previewFotoMasjid');
+            if (s.fotoMasjid) {
+                preview.src = s.fotoMasjid;
+                preview.style.display = 'block';
+            }
+        }
+
+        async function saveSettings(e) {
+            e.preventDefault();
+            siteData.settings = {
+                nama: document.getElementById('settingNama').value,
+                alamat: document.getElementById('settingAlamat').value,
+                rekening: document.getElementById('settingRekening').value,
+                maps: document.getElementById('settingMaps').value,
+                radio: document.getElementById('settingRadio').value,
+                fotoMasjid: document.getElementById('settingFotoMasjid').value
+            };
+            var success = await saveData();
+            if (success) alert('Pengaturan berhasil disimpan!');
+        }
+
+        // Preview handlers
+        document.getElementById('settingFotoMasjid').addEventListener('change', function() {
+            var preview = document.getElementById('previewFotoMasjid');
+            if (this.value) {
+                preview.src = this.value;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        document.getElementById('pengurusFoto').addEventListener('change', function() {
+            var preview = document.getElementById('previewPengurusFoto');
+            if (this.value) {
+                preview.src = this.value;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        document.getElementById('kisahGambar').addEventListener('change', function() {
+            var preview = document.getElementById('previewKisahGambar');
+            if (this.value) {
+                preview.src = this.value;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // ==================== INIT ====================
+        checkAuth();
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
