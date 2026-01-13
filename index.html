@@ -1398,157 +1398,173 @@
     </button>
 
     <script>
-        // CONFIG
-        var CONFIG = {
-            BIN_ID: '695e6e2f43b1c97be91f9289',
-            API_KEY: '$2a$10$mu94DGoU.bNfbEUgWcjffueeAaIQfeb2hMzp.TM.Tg6M8JiaUOIVm'
-        };
+    // ==================== CONFIG ====================
+    var CONFIG = {
+        BIN_ID: '695e6e2f43b1c97be91f9289',
+        API_KEY: '$2a$10$mu94DGoU.bNfbEUgWcjffueeAaIQfeb2hMzp.TM.Tg6M8JiaUOIVm'
+    };
 
-        var DATA = {};
-        var currentSlide = 0;
-        var slideInterval = null;
-        var totalSlides = 0;
+    var DATA = {};
+    var currentSlide = 0;
+    var slideInterval = null;
+    var totalSlides = 0;
+    var slideshowPaused = false;
 
-        // LOAD DATA
-        async function loadData() {
-            try {
-                var response = await fetch('https://api.jsonbin.io/v3/b/' + CONFIG.BIN_ID + '/latest', {
-                    headers: { 'X-Master-Key': CONFIG.API_KEY }
-                });
-                var result = await response.json();
-                DATA = result.record || {};
-                renderAll();
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
+    // ==================== LOAD DATA ====================
+    async function loadData() {
+        try {
+            var response = await fetch('https://api.jsonbin.io/v3/b/' + CONFIG.BIN_ID + '/latest', {
+                headers: { 'X-Master-Key': CONFIG.API_KEY }
+            });
+            var result = await response.json();
+            DATA = result.record || {};
+            renderAll();
+        } catch (error) {
+            console.error('Error loading data:', error);
         }
+    }
 
-        function renderAll() {
-            renderPengaturan();
-            renderTentang();
-            renderPengurus();
-            renderKajian();
-            renderKeuangan();
-            renderZakat();
-            renderKisah();
-            renderGaleri();
-            renderSerbaSerbi();
+    function renderAll() {
+        renderPengaturan();
+        renderTentang();
+        renderPengurus();
+        renderKajian();
+        renderKeuangan();
+        renderZakat();
+        renderKisah();
+        renderGaleri();
+        renderSerbaSerbi();
+    }
+
+    // ==================== PENGATURAN ====================
+    function renderPengaturan() {
+        var p = DATA.pengaturan || {};
+        
+        if (p.gambarMasjid) {
+            var heroImg = document.getElementById('heroImage');
+            var navLogo = document.getElementById('navLogo');
+            if (heroImg) heroImg.src = p.gambarMasjid;
+            if (navLogo) navLogo.src = p.gambarMasjid;
         }
-
-        // PENGATURAN (Gambar, Map, Rekening)
-        function renderPengaturan() {
-            var p = DATA.pengaturan || {};
-            
-            // Gambar Masjid
-            if (p.gambarMasjid) {
-                document.getElementById('heroImage').src = p.gambarMasjid;
-                document.getElementById('navLogo').src = p.gambarMasjid;
-            }
-            
-            // Rekening
-            if (p.bank) document.getElementById('bankName').textContent = p.bank;
-            if (p.rekening) document.getElementById('rekeningNumber').textContent = p.rekening;
-            if (p.atasNama) document.getElementById('rekeningAtasNama').textContent = 'a.n. ' + p.atasNama;
-            
-            // Alamat
-            if (p.alamat) {
-                document.getElementById('lokasiAlamat').textContent = p.alamat;
-            }
-            
-            // Map
-            if (p.mapEmbed) {
-                document.getElementById('mapContainer').innerHTML = p.mapEmbed;
-            }
+        
+        if (p.bank) {
+            var bankEl = document.getElementById('bankName');
+            if (bankEl) bankEl.textContent = p.bank;
         }
+        if (p.rekening) {
+            var rekEl = document.getElementById('rekeningNumber');
+            if (rekEl) rekEl.textContent = p.rekening;
+        }
+        if (p.atasNama) {
+            var atasNamaEl = document.getElementById('rekeningAtasNama');
+            if (atasNamaEl) atasNamaEl.textContent = 'a.n. ' + p.atasNama;
+        }
+        
+        if (p.alamat) {
+            var alamatEl = document.getElementById('lokasiAlamat');
+            if (alamatEl) alamatEl.textContent = p.alamat;
+        }
+        
+        if (p.mapEmbed) {
+            var mapEl = document.getElementById('mapContainer');
+            if (mapEl) mapEl.innerHTML = p.mapEmbed;
+        }
+    }
 
-        // JADWAL SHOLAT
-        async function loadJadwalSholat() {
-            var today = new Date();
-            var dateStr = today.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            document.getElementById('currentDate').textContent = dateStr;
+    // ==================== JADWAL SHOLAT ====================
+    async function loadJadwalSholat() {
+        var today = new Date();
+        var dateStr = today.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('currentDate').textContent = dateStr;
 
-            try {
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0');
-                var yyyy = today.getFullYear();
-                
-                var response = await fetch('https://api.aladhan.com/v1/timings/' + dd + '-' + mm + '-' + yyyy + '?latitude=-6.3261&longitude=107.1378&method=20');
-                var result = await response.json();
-                
-                if (result.code === 200) {
-                    var timings = result.data.timings;
-                    var hijri = result.data.date.hijri;
-                    document.getElementById('hijriDate').textContent = hijri.day + ' ' + hijri.month.en + ' ' + hijri.year + ' H';
-                    renderJadwal(timings);
-                } else {
-                    renderFallbackJadwal();
-                }
-            } catch (error) {
-                console.error('Error loading jadwal:', error);
+        try {
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            
+            var response = await fetch('https://api.aladhan.com/v1/timings/' + dd + '-' + mm + '-' + yyyy + '?latitude=-6.3261&longitude=107.1378&method=20');
+            var result = await response.json();
+            
+            if (result.code === 200) {
+                var timings = result.data.timings;
+                var hijri = result.data.date.hijri;
+                document.getElementById('hijriDate').textContent = hijri.day + ' ' + hijri.month.en + ' ' + hijri.year + ' H';
+                renderJadwal(timings);
+            } else {
                 renderFallbackJadwal();
             }
+        } catch (error) {
+            console.error('Error loading jadwal:', error);
+            renderFallbackJadwal();
+        }
+    }
+
+    function renderJadwal(timings) {
+        var jadwalList = [
+            { name: 'Subuh', time: timings.Fajr, icon: 'fa-cloud-sun' },
+            { name: 'Dzuhur', time: timings.Dhuhr, icon: 'fa-sun' },
+            { name: 'Ashar', time: timings.Asr, icon: 'fa-cloud' },
+            { name: 'Maghrib', time: timings.Maghrib, icon: 'fa-cloud-moon' },
+            { name: 'Isya', time: timings.Isha, icon: 'fa-moon' }
+        ];
+
+        var now = new Date();
+        var currentMinutes = now.getHours() * 60 + now.getMinutes();
+        var activeIndex = -1;
+
+        for (var i = jadwalList.length - 1; i >= 0; i--) {
+            var parts = jadwalList[i].time.split(':');
+            var jadwalMinutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+            if (currentMinutes >= jadwalMinutes) {
+                activeIndex = i;
+                break;
+            }
         }
 
-        function renderJadwal(timings) {
-            var jadwalList = [
-                { name: 'Subuh', time: timings.Fajr, icon: 'fa-cloud-sun' },
-                { name: 'Dzuhur', time: timings.Dhuhr, icon: 'fa-sun' },
-                { name: 'Ashar', time: timings.Asr, icon: 'fa-cloud' },
-                { name: 'Maghrib', time: timings.Maghrib, icon: 'fa-cloud-moon' },
-                { name: 'Isya', time: timings.Isha, icon: 'fa-moon' }
-            ];
-
-            var now = new Date();
-            var currentMinutes = now.getHours() * 60 + now.getMinutes();
-            var activeIndex = -1;
-
-            for (var i = jadwalList.length - 1; i >= 0; i--) {
-                var parts = jadwalList[i].time.split(':');
-                var jadwalMinutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-                if (currentMinutes >= jadwalMinutes) {
-                    activeIndex = i;
-                    break;
-                }
-            }
-
-            var html = '';
-            for (var i = 0; i < jadwalList.length; i++) {
-                var activeClass = i === activeIndex ? 'active' : '';
-                html += '<div class="jadwal-card ' + activeClass + '">';
-                html += '<div class="jadwal-icon"><i class="fas ' + jadwalList[i].icon + '"></i></div>';
-                html += '<div class="jadwal-name">' + jadwalList[i].name + '</div>';
-                html += '<div class="jadwal-time">' + jadwalList[i].time + '</div>';
-                html += '</div>';
-            }
-            document.getElementById('jadwalGrid').innerHTML = html;
+        var html = '';
+        for (var i = 0; i < jadwalList.length; i++) {
+            var activeClass = i === activeIndex ? 'active' : '';
+            html += '<div class="jadwal-card ' + activeClass + '">';
+            html += '<div class="jadwal-icon"><i class="fas ' + jadwalList[i].icon + '"></i></div>';
+            html += '<div class="jadwal-name">' + jadwalList[i].name + '</div>';
+            html += '<div class="jadwal-time">' + jadwalList[i].time + '</div>';
+            html += '</div>';
         }
+        document.getElementById('jadwalGrid').innerHTML = html;
+    }
 
-        function renderFallbackJadwal() {
-            var fallback = [
-                { name: 'Subuh', time: '04:30', icon: 'fa-cloud-sun' },
-                { name: 'Dzuhur', time: '11:55', icon: 'fa-sun' },
-                { name: 'Ashar', time: '15:15', icon: 'fa-cloud' },
-                { name: 'Maghrib', time: '18:00', icon: 'fa-cloud-moon' },
-                { name: 'Isya', time: '19:15', icon: 'fa-moon' }
-            ];
+    function renderFallbackJadwal() {
+        var fallback = [
+            { name: 'Subuh', time: '04:30', icon: 'fa-cloud-sun' },
+            { name: 'Dzuhur', time: '11:55', icon: 'fa-sun' },
+            { name: 'Ashar', time: '15:15', icon: 'fa-cloud' },
+            { name: 'Maghrib', time: '18:00', icon: 'fa-cloud-moon' },
+            { name: 'Isya', time: '19:15', icon: 'fa-moon' }
+        ];
 
-            var html = '';
-            for (var i = 0; i < fallback.length; i++) {
-                html += '<div class="jadwal-card">';
-                html += '<div class="jadwal-icon"><i class="fas ' + fallback[i].icon + '"></i></div>';
-                html += '<div class="jadwal-name">' + fallback[i].name + '</div>';
-                html += '<div class="jadwal-time">' + fallback[i].time + '</div>';
-                html += '</div>';
-            }
-            document.getElementById('jadwalGrid').innerHTML = html;
+        var html = '';
+        for (var i = 0; i < fallback.length; i++) {
+            html += '<div class="jadwal-card">';
+            html += '<div class="jadwal-icon"><i class="fas ' + fallback[i].icon + '"></i></div>';
+            html += '<div class="jadwal-name">' + fallback[i].name + '</div>';
+            html += '<div class="jadwal-time">' + fallback[i].time + '</div>';
+            html += '</div>';
         }
+        document.getElementById('jadwalGrid').innerHTML = html;
+    }
 
-        // TENTANG
-        function renderTentang() {
-            if (!DATA.tentang) return;
-            document.getElementById('tentangDeskripsi').textContent = DATA.tentang.deskripsi || '-';
-            document.getElementById('tentangVisi').textContent = DATA.tentang.visi || '-';
+    // ==================== TENTANG ====================
+    function renderTentang() {
+        if (!DATA.tentang) return;
+        
+        var deskEl = document.getElementById('tentangDeskripsi');
+        var visiEl = document.getElementById('tentangVisi');
+        var misiEl = document.getElementById('tentangMisi');
+        
+        if (deskEl) deskEl.textContent = DATA.tentang.deskripsi || '-';
+        if (visiEl) visiEl.textContent = DATA.tentang.visi || '-';
 
+        if (misiEl) {
             var misiHtml = '';
             if (DATA.tentang.misi && DATA.tentang.misi.length > 0) {
                 for (var i = 0; i < DATA.tentang.misi.length; i++) {
@@ -1557,364 +1573,572 @@
             } else {
                 misiHtml = '<li>-</li>';
             }
-            document.getElementById('tentangMisi').innerHTML = misiHtml;
+            misiEl.innerHTML = misiHtml;
         }
-
-        // PENGURUS
-        function renderPengurus() {
-            var container = document.getElementById('pengurusContainer');
-            if (!DATA.pengurus || DATA.pengurus.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
-                return;
-            }
-
-            var categories = {
-                'yayasan': { title: 'Yayasan Islam Mekarindah', data: [] },
-                'dkm': { title: 'Dewan Kemakmuran Masjid (DKM)', data: [] },
-                'majlistaklim': { title: 'Majlis Ta\'lim', data: [] }
-            };
-
-            for (var i = 0; i < DATA.pengurus.length; i++) {
-                var p = DATA.pengurus[i];
-                if (categories[p.kategori]) categories[p.kategori].data.push(p);
-            }
-
-            var html = '';
-            var keys = ['yayasan', 'dkm', 'majlistaklim'];
-
-            for (var k = 0; k < keys.length; k++) {
-                var cat = categories[keys[k]];
-                if (cat.data.length > 0) {
-                    html += '<div class="pengurus-kategori">';
-                    html += '<div class="pengurus-kategori-title"><h3>' + cat.title + '</h3></div>';
-                    html += '<div class="pengurus-grid">';
-                    for (var i = 0; i < cat.data.length; i++) {
-                        var p = cat.data[i];
-                        var foto = p.foto || 'https://via.placeholder.com/100x100?text=' + p.nama.charAt(0);
-                        html += '<div class="pengurus-card">';
-                        html += '<img src="' + foto + '" alt="' + p.nama + '">';
-                        html += '<h4>' + p.nama + '</h4>';
-                        html += '<p>' + p.jabatan + '</p>';
-                        html += '</div>';
-                    }
-                    html += '</div></div>';
-                }
-            }
-            container.innerHTML = html || '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
-        }
-
-        // KAJIAN
-        function renderKajian() {
-            var container = document.getElementById('kajianGrid');
-            if (!DATA.kajian || DATA.kajian.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><p>Belum ada jadwal kajian</p></div>';
-                return;
-            }
-
-            var html = '';
-            for (var i = 0; i < DATA.kajian.length; i++) {
-                var k = DATA.kajian[i];
-                html += '<div class="kajian-card">';
-                html += '<div class="kajian-header">';
-                html += '<div class="kajian-day"><span>Setiap</span><strong>' + k.hari + '</strong></div>';
-                html += '<div class="kajian-info"><h4>' + k.tema + '</h4><p>' + k.waktu + '</p></div>';
-                html += '</div>';
-                html += '<div class="kajian-ustadz"><i class="fas fa-user"></i> ' + k.ustadz + '</div>';
-                if (k.link) {
-                    html += '<div class="kajian-link"><a href="' + k.link + '" target="_blank"><i class="fab fa-youtube"></i> Tonton Rekaman</a></div>';
-                }
-                html += '</div>';
-            }
-            container.innerHTML = html;
-        }
-
-        // KEUANGAN
-        function formatRupiah(num) {
-            return 'Rp ' + (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function renderKeuangan() {
-            var container = document.getElementById('keuanganContainer');
-            if (!DATA.keuangan || DATA.keuangan.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-money-bill-wave"></i><p>Belum ada laporan keuangan</p></div>';
-                return;
-            }
-
-            var html = '';
-            for (var i = 0; i < DATA.keuangan.length; i++) {
-                var k = DATA.keuangan[i];
-                var saldoAkhir = (k.saldoAwal || 0) + (k.pemasukan || 0) - (k.pengeluaran || 0);
-                
-                html += '<div class="accordion-item">';
-                html += '<div class="accordion-header" onclick="toggleAccordion(this)">';
-                html += '<h4><i class="fas fa-calendar-alt"></i> ' + k.periode + '</h4>';
-                html += '<i class="fas fa-chevron-down toggle-icon"></i>';
-                html += '</div>';
-                html += '<div class="accordion-content"><div class="accordion-body">';
-                html += '<div class="keuangan-summary">';
-                html += '<div class="keuangan-item saldo-awal"><span>Saldo Awal</span><strong>' + formatRupiah(k.saldoAwal) + '</strong></div>';
-                html += '<div class="keuangan-item pemasukan"><span>Pemasukan</span><strong>' + formatRupiah(k.pemasukan) + '</strong></div>';
-                html += '<div class="keuangan-item pengeluaran"><span>Pengeluaran</span><strong>' + formatRupiah(k.pengeluaran) + '</strong></div>';
-                html += '<div class="keuangan-item saldo-akhir"><span>Saldo Akhir</span><strong>' + formatRupiah(saldoAkhir) + '</strong></div>';
-                html += '</div>';
-                
-                if ((k.rincianMasuk && k.rincianMasuk.length > 0) || (k.rincianKeluar && k.rincianKeluar.length > 0)) {
-                    html += '<div class="rincian-list">';
-                    if (k.rincianMasuk && k.rincianMasuk.length > 0) {
-                        html += '<h5>Rincian Pemasukan:</h5><ul>';
-                        for (var j = 0; j < k.rincianMasuk.length; j++) {
-                            html += '<li>' + k.rincianMasuk[j] + '</li>';
-                        }
-                        html += '</ul>';
-                    }
-                    if (k.rincianKeluar && k.rincianKeluar.length > 0) {
-                        html += '<h5>Rincian Pengeluaran:</h5><ul>';
-                        for (var j = 0; j < k.rincianKeluar.length; j++) {
-                            html += '<li>' + k.rincianKeluar[j] + '</li>';
-                        }
-                        html += '</ul>';
-                    }
-                    html += '</div>';
-                }
-                html += '</div></div></div>';
-            }
-            container.innerHTML = html;
-        }
-
-        // ZAKAT
-function renderZakat() {
-    var container = document.getElementById('zakatContainer');
-    if (!DATA.zakat || DATA.zakat.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding-usd"></i><p>Belum ada laporan zakat</p></div>';
-        return;
     }
 
-    var html = '';
-    for (var i = 0; i < DATA.zakat.length; i++) {
-        var z = DATA.zakat[i];
-        var saldoAkhir = (z.saldoAwal || 0) + (z.pemasukan || 0) - (z.pengeluaran || 0);
+    // ==================== PENGURUS ====================
+    function renderPengurus() {
+        var container = document.getElementById('pengurusContainer');
+        if (!container) return;
         
-        html += '<div class="accordion-item">';
-        html += '<div class="accordion-header" onclick="toggleAccordion(this)">';
-        html += '<h4><i class="fas fa-calendar-alt"></i> ' + z.tahun + '</h4>';
-        html += '<i class="fas fa-chevron-down toggle-icon"></i>';
-        html += '</div>';
-        html += '<div class="accordion-content"><div class="accordion-body">';
-        html += '<div class="keuangan-summary">';
-        html += '<div class="keuangan-item saldo-awal"><span>Saldo Awal</span><strong>' + formatRupiah(z.saldoAwal) + '</strong></div>';
-        html += '<div class="keuangan-item pemasukan"><span>Pemasukan</span><strong>' + formatRupiah(z.pemasukan) + '</strong></div>';
-        html += '<div class="keuangan-item pengeluaran"><span>Pengeluaran</span><strong>' + formatRupiah(z.pengeluaran) + '</strong></div>';
-        html += '<div class="keuangan-item saldo-akhir"><span>Saldo Akhir</span><strong>' + formatRupiah(saldoAkhir) + '</strong></div>';
-        html += '</div>';
-        
-        if ((z.rincianMasuk && z.rincianMasuk.length > 0) || (z.rincianKeluar && z.rincianKeluar.length > 0)) {
-            html += '<div class="rincian-list">';
-            if (z.rincianMasuk && z.rincianMasuk.length > 0) {
-                html += '<h5>Rincian Pemasukan:</h5><ul>';
-                for (var j = 0; j < z.rincianMasuk.length; j++) {
-                    html += '<li>' + z.rincianMasuk[j] + '</li>';
+        if (!DATA.pengurus || DATA.pengurus.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
+            return;
+        }
+
+        var categories = {
+            'yayasan': { title: 'Yayasan Islam Mekarindah', data: [] },
+            'dkm': { title: 'Dewan Kemakmuran Masjid (DKM)', data: [] },
+            'majlistaklim': { title: 'Majlis Ta\'lim', data: [] }
+        };
+
+        for (var i = 0; i < DATA.pengurus.length; i++) {
+            var p = DATA.pengurus[i];
+            if (categories[p.kategori]) categories[p.kategori].data.push(p);
+        }
+
+        var html = '';
+        var keys = ['yayasan', 'dkm', 'majlistaklim'];
+
+        for (var k = 0; k < keys.length; k++) {
+            var cat = categories[keys[k]];
+            if (cat.data.length > 0) {
+                html += '<div class="pengurus-kategori">';
+                html += '<div class="pengurus-kategori-title"><h3>' + cat.title + '</h3></div>';
+                html += '<div class="pengurus-grid">';
+                for (var i = 0; i < cat.data.length; i++) {
+                    var p = cat.data[i];
+                    var foto = p.foto || 'https://via.placeholder.com/100x100?text=' + p.nama.charAt(0);
+                    html += '<div class="pengurus-card">';
+                    html += '<img src="' + foto + '" alt="' + p.nama + '">';
+                    html += '<h4>' + p.nama + '</h4>';
+                    html += '<p>' + p.jabatan + '</p>';
+                    html += '</div>';
                 }
-                html += '</ul>';
+                html += '</div></div>';
             }
-            if (z.rincianKeluar && z.rincianKeluar.length > 0) {
-                html += '<h5>Rincian Pengeluaran:</h5><ul>';
-                for (var j = 0; j < z.rincianKeluar.length; j++) {
-                    html += '<li>' + z.rincianKeluar[j] + '</li>';
-                }
-                html += '</ul>';
+        }
+        container.innerHTML = html || '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
+    }
+
+    // ==================== KAJIAN ====================
+    function renderKajian() {
+        var container = document.getElementById('kajianGrid');
+        if (!container) return;
+        
+        if (!DATA.kajian || DATA.kajian.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><p>Belum ada jadwal kajian</p></div>';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < DATA.kajian.length; i++) {
+            var k = DATA.kajian[i];
+            html += '<div class="kajian-card">';
+            html += '<div class="kajian-header">';
+            html += '<div class="kajian-day"><span>Setiap</span><strong>' + k.hari + '</strong></div>';
+            html += '<div class="kajian-info"><h4>' + k.tema + '</h4><p>' + k.waktu + '</p></div>';
+            html += '</div>';
+            html += '<div class="kajian-ustadz"><i class="fas fa-user"></i> ' + k.ustadz + '</div>';
+            if (k.link) {
+                html += '<div class="kajian-link"><a href="' + k.link + '" target="_blank"><i class="fab fa-youtube"></i> Tonton Rekaman</a></div>';
             }
             html += '</div>';
         }
-        html += '</div></div></div>';
+        container.innerHTML = html;
     }
-    container.innerHTML = html;
-}
 
-        function toggleAccordion(header) {
-            var item = header.parentElement;
-            item.classList.toggle('active');
+    // ==================== KEUANGAN ====================
+    function formatRupiah(num) {
+        return 'Rp ' + (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function renderKeuangan() {
+        var container = document.getElementById('keuanganContainer');
+        if (!container) return;
+        
+        if (!DATA.keuangan || DATA.keuangan.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-money-bill-wave"></i><p>Belum ada laporan keuangan</p></div>';
+            return;
         }
 
-        // KISAH
-        function formatTanggal(dateStr) {
-            if (!dateStr) return '-';
-            var d = new Date(dateStr);
-            var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-        }
-
-        function renderKisah() {
-            var container = document.getElementById('kisahGrid');
-            if (!DATA.kisah || DATA.kisah.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-heart"></i><p>Belum ada kisah inspiratif</p></div>';
-                return;
-            }
-
-            var sorted = DATA.kisah.slice().sort(function(a, b) {
-                return new Date(b.tanggal) - new Date(a.tanggal);
-            });
-
-            var html = '';
-            for (var i = 0; i < sorted.length; i++) {
-                var k = sorted[i];
-                var gambar = k.gambar || 'https://via.placeholder.com/400x200?text=Kisah+Inspiratif';
-                var isiText = k.isi || '';
-                var isiShort = isiText.length > 100 ? isiText.substring(0, 100) + '...' : isiText;
-
-                html += '<div class="kisah-card" onclick="openKisahModal(' + i + ')">';
-                html += '<img src="' + gambar + '" alt="' + (k.judul || 'Kisah') + '">';
-                html += '<div class="kisah-card-body">';
-                html += '<p class="date"><i class="far fa-calendar-alt"></i> ' + formatTanggal(k.tanggal) + '</p>';
-                html += '<h4>' + (k.judul || '-') + '</h4>';
-                html += '<p>' + isiShort + '</p>';
-                html += '<span class="read-more">Baca selengkapnya →</span>';
-                html += '</div></div>';
-            }
-            container.innerHTML = html;
-        }
-
-        var sortedKisah = [];
-        function openKisahModal(index) {
-            sortedKisah = DATA.kisah.slice().sort(function(a, b) {
-                return new Date(b.tanggal) - new Date(a.tanggal);
-            });
-
-            var k = sortedKisah[index];
-            if (!k) return;
+        var html = '';
+        for (var i = 0; i < DATA.keuangan.length; i++) {
+            var k = DATA.keuangan[i];
+            var saldoAkhir = (k.saldoAwal || 0) + (k.pemasukan || 0) - (k.pengeluaran || 0);
             
-            document.getElementById('kisahModalTitle').textContent = k.judul || '-';
-            document.getElementById('kisahModalImage').src = k.gambar || 'https://via.placeholder.com/700x300?text=Kisah+Inspiratif';
-            document.getElementById('kisahModalDate').innerHTML = '<i class="far fa-calendar-alt"></i> ' + formatTanggal(k.tanggal);
-            document.getElementById('kisahModalContent').textContent = k.isi || '-';
-            document.getElementById('kisahModal').classList.add('show');
-        }
-
-        function closeKisahModal() {
-            document.getElementById('kisahModal').classList.remove('show');
-        }
-
-      // ==================== GALERI SLIDER ==================== 
-      var currentSlide = 0; var slideInterval = null; var totalSlides = 0; var slideshowPaused = false; function extractYouTubeID(url) { var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/; var match = url.match(regExp); return (match && match[2].length === 11) ? match[2] : null; } function extractInstagramID(url) { var regExp = /instagram.com\/(?:p|reel|reels)\/([^/?#]+)/; var match = url.match(regExp); return match ? match[1] : null; } function extractTikTokID(url) { var regExp = /tiktok.com\/@[^/]+\/video\/(\d+)/; var match = url.match(regExp); return match ? match[1] : null; } function renderGaleri() { var slidesContainer = document.getElementById('galeriSlides'); var dotsContainer = document.getElementById('galeriDots'); if (!slidesContainer  !dotsContainer) return; if (!DATA.galeri  DATA.galeri.length === 0) { slidesContainer.innerHTML = '<div class="galeri-slide"><div class="empty-state" style="height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;"><i class="fas fa-images"></i><p>Belum ada media galeri</p></div></div>'; var prevBtn = document.querySelector('.galeri-nav.prev'); var nextBtn = document.querySelector('.galeri-nav.next'); if (prevBtn) prevBtn.style.display = 'none'; if (nextBtn) nextBtn.style.display = 'none'; dotsContainer.innerHTML = ''; document.getElementById('galeriCounter').textContent = ''; return; } var html = ''; var dotsHtml = ''; totalSlides = DATA.galeri.length; for (var i = 0; i < DATA.galeri.length; i++) { var g = DATA.galeri[i]; html += '<div class="galeri-slide" data-type="' + g.tipe + '">'; if (g.tipe === 'foto') { html += '<img src="' + g.url + '" alt="' + (g.keterangan || 'Foto') + '" onclick="openLightbox(\'' + g.url + '\')">'; } else if (g.tipe === 'youtube') { var ytID = extractYouTubeID(g.url); if (ytID) { html += '<div class="video-container" onclick="pauseForVideo(this)">'; html += '<iframe src="https://www.youtube.com/embed/' + ytID + '?rel=0" allowfullscreen></iframe>'; html += '<div class="video-play-overlay"><i class="fas fa-play-circle"></i><span>Klik untuk menonton</span></div>'; html += '</div>'; } } else if (g.tipe === 'instagram') { var igID = extractInstagramID(g.url); if (igID) { html += '<div class="video-container" onclick="pauseForVideo(this)">'; html += '<iframe src="https://www.instagram.com/reel/' + igID + '/embed/" allowfullscreen scrolling="no"></iframe>'; html += '<div class="video-play-overlay"><i class="fab fa-instagram"></i><span>Klik untuk menonton</span></div>'; html += '</div>'; } } else if (g.tipe === 'tiktok') { var ttID = extractTikTokID(g.url); if (ttID) { html += '<div class="video-container" onclick="pauseForVideo(this)">'; html += '<iframe src="https://www.tiktok.com/embed/v2/' + ttID + '" allowfullscreen></iframe>'; html += '<div class="video-play-overlay"><i class="fab fa-tiktok"></i><span>Klik untuk menonton</span></div>'; html += '</div>'; } } if (g.keterangan) { html += '<div class="galeri-caption">' + g.keterangan + '</div>'; } html += '</div>'; dotsHtml += '<button class="galeri-dot' + (i === 0 ? ' active' : '') + '" onclick="goToSlide(' + i + ')"></button>'; } slidesContainer.innerHTML = html; dotsContainer.innerHTML = dotsHtml; var prevBtn = document.querySelector('.galeri-nav.prev'); var nextBtn = document.querySelector('.galeri-nav.next'); if (prevBtn) prevBtn.style.display = 'block'; if (nextBtn) nextBtn.style.display = 'block'; updateCounter(); startSlideshow(); } function pauseForVideo(element) { // Stop slideshow if (slideInterval) { clearInterval(slideInterval); slideInterval = null; } slideshowPaused = true; // Sembunyikan overlay yang diklik var overlay = element.querySelector('.video-play-overlay'); if (overlay) { overlay.style.display = 'none'; } // Aktifkan iframe supaya bisa diklik var iframe = element.querySelector('iframe'); if (iframe) { iframe.style.pointerEvents = 'auto'; } // Tampilkan tombol resume showResumeBtn(); } function showResumeBtn() { if (document.getElementById('btnResumeSlide')) return; var btn = document.createElement('button'); btn.id = 'btnResumeSlide'; btn.className = 'btn-resume-slide'; btn.innerHTML = '<i class="fas fa-play"></i> Lanjutkan Slideshow'; btn.onclick = resumeSlideshow; var container = document.querySelector('.galeri-slider-container'); if (container) { container.appendChild(btn); } } function resumeSlideshow() { slideshowPaused = false; // Hapus tombol resume var btn = document.getElementById('btnResumeSlide'); if (btn) btn.remove(); // Tampilkan semua overlay lagi var overlays = document.querySelectorAll('.video-play-overlay'); for (var i = 0; i < overlays.length; i++) { overlays[i].style.display = 'flex'; } // Nonaktifkan pointer events iframe var iframes = document.querySelectorAll('.video-container iframe'); for (var i = 0; i < iframes.length; i++) { iframes[i].style.pointerEvents = 'none'; } // Lanjutkan slideshow startSlideshow(); } function updateCounter() { var counter = document.getElementById('galeriCounter'); if (counter && totalSlides > 0) { counter.textContent = (currentSlide + 1) + ' / ' + totalSlides; } } function updateSlider() { var slides = document.getElementById('galeriSlides'); if (slides) { slides.style.transform = 'translateX(-' + (currentSlide * 100) + '%)'; } var dots = document.querySelectorAll('.galeri-dot'); for (var i = 0; i < dots.length; i++) { if (i === currentSlide) { dots[i].classList.add('active'); } else { dots[i].classList.remove('active'); } } updateCounter(); } function nextSlide() { if (slideshowPaused || totalSlides === 0) return; currentSlide = (currentSlide + 1) % totalSlides; updateSlider(); } function prevSlide() { if (totalSlides === 0) return; currentSlide = (currentSlide - 1 + totalSlides) % totalSlides; updateSlider(); if (!slideshowPaused) { resetSlideshow(); } } function goToSlide(index) { currentSlide = index; updateSlider(); if (!slideshowPaused) { resetSlideshow(); } } function startSlideshow() { if (slideInterval) clearInterval(slideInterval); if (totalSlides > 1 && !slideshowPaused) { slideInterval = setInterval(nextSlide, 5000); } } function resetSlideshow() { if (!slideshowPaused) { startSlideshow(); } } function openLightbox(src) { document.getElementById('lightboxImage').src = src; document.getElementById('lightbox').classList.add('show'); } function closeLightbox() { document.getElementById('lightbox').classList.remove('show'); }
-        // SERBA SERBI
-        function renderSerbaSerbi() {
-            var container = document.getElementById('serbaSerbiGrid');
-            if (!DATA.serbaSerbi || DATA.serbaSerbi.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>Belum ada informasi</p></div>';
-                return;
-            }
-
-            var sorted = DATA.serbaSerbi.slice().sort(function(a, b) {
-                if (a.penting && !b.penting) return -1;
-                if (!a.penting && b.penting) return 1;
-                return new Date(b.tanggal) - new Date(a.tanggal);
-            });
-
-            var html = '';
-            for (var i = 0; i < sorted.length; i++) {
-                var item = sorted[i];
-                var gambar = item.gambar || 'https://via.placeholder.com/400x200?text=Serba+Serbi';
-                var isiText = item.isi || '';
-                var isiShort = isiText.length > 120 ? isiText.substring(0, 120) + '...' : isiText;
-                var pentingClass = item.penting ? 'penting' : '';
-                var badgeHtml = item.penting ? '<span class="badge-penting">PENTING</span>' : '';
-
-                html += '<div class="serbasabi-card ' + pentingClass + '" onclick="openSerbaSerbiModal(' + i + ')">';
-                html += '<img src="' + gambar + '" alt="' + item.judul + '">';
-                html += '<div class="serbasabi-card-body">';
-                html += '<div class="serbasabi-card-header">';
-                html += '<span class="date"><i class="far fa-calendar-alt"></i> ' + formatTanggal(item.tanggal) + '</span>';
-                html += badgeHtml;
+            html += '<div class="accordion-item">';
+            html += '<div class="accordion-header" onclick="toggleAccordion(this)">';
+            html += '<h4><i class="fas fa-calendar-alt"></i> ' + k.periode + '</h4>';
+            html += '<i class="fas fa-chevron-down toggle-icon"></i>';
+            html += '</div>';
+            html += '<div class="accordion-content"><div class="accordion-body">';
+            html += '<div class="keuangan-summary">';
+            html += '<div class="keuangan-item saldo-awal"><span>Saldo Awal</span><strong>' + formatRupiah(k.saldoAwal) + '</strong></div>';
+            html += '<div class="keuangan-item pemasukan"><span>Pemasukan</span><strong>' + formatRupiah(k.pemasukan) + '</strong></div>';
+            html += '<div class="keuangan-item pengeluaran"><span>Pengeluaran</span><strong>' + formatRupiah(k.pengeluaran) + '</strong></div>';
+            html += '<div class="keuangan-item saldo-akhir"><span>Saldo Akhir</span><strong>' + formatRupiah(saldoAkhir) + '</strong></div>';
+            html += '</div>';
+            
+            if ((k.rincianMasuk && k.rincianMasuk.length > 0) || (k.rincianKeluar && k.rincianKeluar.length > 0)) {
+                html += '<div class="rincian-list">';
+                if (k.rincianMasuk && k.rincianMasuk.length > 0) {
+                    html += '<h5>Rincian Pemasukan:</h5><ul>';
+                    for (var j = 0; j < k.rincianMasuk.length; j++) {
+                        html += '<li>' + k.rincianMasuk[j] + '</li>';
+                    }
+                    html += '</ul>';
+                }
+                if (k.rincianKeluar && k.rincianKeluar.length > 0) {
+                    html += '<h5>Rincian Pengeluaran:</h5><ul>';
+                    for (var j = 0; j < k.rincianKeluar.length; j++) {
+                        html += '<li>' + k.rincianKeluar[j] + '</li>';
+                    }
+                    html += '</ul>';
+                }
                 html += '</div>';
-                html += '<h4>' + item.judul + '</h4>';
-                html += '<p>' + isiShort + '</p>';
-                html += '<span class="read-more">Baca selengkapnya →</span>';
-                html += '</div></div>';
             }
-            container.innerHTML = html;
+            html += '</div></div></div>';
+        }
+        container.innerHTML = html;
+    }
+
+    // ==================== ZAKAT ====================
+    function renderZakat() {
+        var container = document.getElementById('zakatContainer');
+        if (!container) return;
+        
+        if (!DATA.zakat || DATA.zakat.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding-usd"></i><p>Belum ada laporan zakat</p></div>';
+            return;
         }
 
-        var sortedSerbaSerbi = [];
-        function openSerbaSerbiModal(index) {
-            sortedSerbaSerbi = DATA.serbaSerbi.slice().sort(function(a, b) {
-                if (a.penting && !b.penting) return -1;
-                if (!a.penting && b.penting) return 1;
-                return new Date(b.tanggal) - new Date(a.tanggal);
-            });
+        var html = '';
+        for (var i = 0; i < DATA.zakat.length; i++) {
+            var z = DATA.zakat[i];
+            var saldoAkhir = (z.saldoAwal || 0) + (z.pemasukan || 0) - (z.pengeluaran || 0);
+            
+            html += '<div class="accordion-item">';
+            html += '<div class="accordion-header" onclick="toggleAccordion(this)">';
+            html += '<h4><i class="fas fa-calendar-alt"></i> ' + z.tahun + '</h4>';
+            html += '<i class="fas fa-chevron-down toggle-icon"></i>';
+            html += '</div>';
+            html += '<div class="accordion-content"><div class="accordion-body">';
+            html += '<div class="keuangan-summary">';
+            html += '<div class="keuangan-item saldo-awal"><span>Saldo Awal</span><strong>' + formatRupiah(z.saldoAwal) + '</strong></div>';
+            html += '<div class="keuangan-item pemasukan"><span>Pemasukan</span><strong>' + formatRupiah(z.pemasukan) + '</strong></div>';
+            html += '<div class="keuangan-item pengeluaran"><span>Pengeluaran</span><strong>' + formatRupiah(z.pengeluaran) + '</strong></div>';
+            html += '<div class="keuangan-item saldo-akhir"><span>Saldo Akhir</span><strong>' + formatRupiah(saldoAkhir) + '</strong></div>';
+            html += '</div>';
+            
+            if ((z.rincianMasuk && z.rincianMasuk.length > 0) || (z.rincianKeluar && z.rincianKeluar.length > 0)) {
+                html += '<div class="rincian-list">';
+                if (z.rincianMasuk && z.rincianMasuk.length > 0) {
+                    html += '<h5>Rincian Pemasukan:</h5><ul>';
+                    for (var j = 0; j < z.rincianMasuk.length; j++) {
+                        html += '<li>' + z.rincianMasuk[j] + '</li>';
+                    }
+                    html += '</ul>';
+                }
+                if (z.rincianKeluar && z.rincianKeluar.length > 0) {
+                    html += '<h5>Rincian Pengeluaran:</h5><ul>';
+                    for (var j = 0; j < z.rincianKeluar.length; j++) {
+                        html += '<li>' + z.rincianKeluar[j] + '</li>';
+                    }
+                    html += '</ul>';
+                }
+                html += '</div>';
+            }
+            html += '</div></div></div>';
+        }
+        container.innerHTML = html;
+    }
 
-            var item = sortedSerbaSerbi[index];
-            if (!item) return;
+    function toggleAccordion(header) {
+        var item = header.parentElement;
+        item.classList.toggle('active');
+    }
 
-            document.getElementById('serbaSerbiModalTitle').textContent = item.judul;
-            document.getElementById('serbaSerbiModalImage').src = item.gambar || 'https://via.placeholder.com/700x300?text=Serba+Serbi';
-            document.getElementById('serbaSerbiModalDate').innerHTML = '<i class="far fa-calendar-alt"></i> ' + formatTanggal(item.tanggal);
-            document.getElementById('serbaSerbiModalContent').textContent = item.isi;
-            document.getElementById('serbaSerbiModal').classList.add('show');
+    // ==================== KISAH ====================
+    function formatTanggal(dateStr) {
+        if (!dateStr) return '-';
+        var d = new Date(dateStr);
+        var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function renderKisah() {
+        var container = document.getElementById('kisahGrid');
+        if (!container) return;
+        
+        if (!DATA.kisah || DATA.kisah.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-heart"></i><p>Belum ada kisah inspiratif</p></div>';
+            return;
         }
 
-        function closeSerbaSerbiModal() {
-            document.getElementById('serbaSerbiModal').classList.remove('show');
+        var sorted = DATA.kisah.slice().sort(function(a, b) {
+            return new Date(b.tanggal) - new Date(a.tanggal);
+        });
+
+        var html = '';
+        for (var i = 0; i < sorted.length; i++) {
+            var k = sorted[i];
+            var gambar = k.gambar || 'https://via.placeholder.com/800x500?text=Kisah+Inspiratif';
+            var isiText = k.isi || '';
+            var isiShort = isiText.length > 100 ? isiText.substring(0, 100) + '...' : isiText;
+
+            html += '<div class="kisah-card" onclick="openKisahModal(' + i + ')">';
+            html += '<img src="' + gambar + '" alt="' + (k.judul || 'Kisah') + '">';
+            html += '<div class="kisah-card-body">';
+            html += '<p class="date"><i class="far fa-calendar-alt"></i> ' + formatTanggal(k.tanggal) + '</p>';
+            html += '<h4>' + (k.judul || '-') + '</h4>';
+            html += '<p>' + isiShort + '</p>';
+            html += '<span class="read-more">Baca selengkapnya</span>';
+            html += '</div></div>';
+        }
+        container.innerHTML = html;
+    }
+
+    var sortedKisah = [];
+    function openKisahModal(index) {
+        sortedKisah = DATA.kisah.slice().sort(function(a, b) {
+            return new Date(b.tanggal) - new Date(a.tanggal);
+        });
+
+        var k = sortedKisah[index];
+        if (!k) return;
+        
+        document.getElementById('kisahModalTitle').textContent = k.judul || '-';
+        document.getElementById('kisahModalImage').src = k.gambar || 'https://via.placeholder.com/800x500?text=Kisah+Inspiratif';
+        document.getElementById('kisahModalDate').innerHTML = '<i class="far fa-calendar-alt"></i> ' + formatTanggal(k.tanggal);
+        document.getElementById('kisahModalContent').textContent = k.isi || '-';
+        document.getElementById('kisahModal').classList.add('show');
+    }
+
+    function closeKisahModal() {
+        document.getElementById('kisahModal').classList.remove('show');
+    }
+
+    // ==================== GALERI SLIDER ====================
+    function extractYouTubeID(url) {
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        var match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    function extractInstagramID(url) {
+        var regExp = /instagram.com\/(?:p|reel|reels)\/([^/?#]+)/;
+        var match = url.match(regExp);
+        return match ? match[1] : null;
+    }
+
+    function extractTikTokID(url) {
+        var regExp = /tiktok.com\/@[^/]+\/video\/(\d+)/;
+        var match = url.match(regExp);
+        return match ? match[1] : null;
+    }
+
+    function renderGaleri() {
+        var slidesContainer = document.getElementById('galeriSlides');
+        var dotsContainer = document.getElementById('galeriDots');
+        
+        if (!slidesContainer) return;
+        
+        if (!DATA.galeri || DATA.galeri.length === 0) {
+            slidesContainer.innerHTML = '<div class="galeri-slide"><div class="empty-state" style="height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;"><i class="fas fa-images"></i><p>Belum ada media galeri</p></div></div>';
+            var prevBtn = document.querySelector('.galeri-nav.prev');
+            var nextBtn = document.querySelector('.galeri-nav.next');
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+            return;
         }
 
-        // UTILITY
-        function copyRekening() {
-            var rekening = document.getElementById('rekeningNumber').textContent.replace(/\s/g, '');
-            navigator.clipboard.writeText(rekening).then(function() {
-                alert('Nomor rekening berhasil disalin!');
-            }).catch(function() {
-                prompt('Salin nomor rekening:', rekening);
-            });
+        var html = '';
+        var dotsHtml = '';
+        totalSlides = DATA.galeri.length;
+
+        for (var i = 0; i < DATA.galeri.length; i++) {
+            var g = DATA.galeri[i];
+            
+            html += '<div class="galeri-slide" data-type="' + g.tipe + '">';
+            
+            if (g.tipe === 'foto') {
+                html += '<img src="' + g.url + '" alt="' + (g.keterangan || 'Foto') + '" onclick="openLightbox(\'' + g.url + '\')">';
+            } else if (g.tipe === 'youtube') {
+                var ytID = extractYouTubeID(g.url);
+                if (ytID) {
+                    html += '<div class="video-container">';
+                    html += '<iframe src="https://www.youtube.com/embed/' + ytID + '?rel=0" allowfullscreen></iframe>';
+                    html += '<div class="video-play-overlay" onclick="pauseForVideo(this)"><i class="fas fa-play-circle"></i><span>Klik untuk menonton</span></div>';
+                    html += '</div>';
+                }
+            } else if (g.tipe === 'instagram') {
+                var igID = extractInstagramID(g.url);
+                if (igID) {
+                    html += '<div class="video-container">';
+                    html += '<iframe src="https://www.instagram.com/reel/' + igID + '/embed/" allowfullscreen scrolling="no"></iframe>';
+                    html += '<div class="video-play-overlay" onclick="pauseForVideo(this)"><i class="fab fa-instagram"></i><span>Klik untuk menonton</span></div>';
+                    html += '</div>';
+                }
+            } else if (g.tipe === 'tiktok') {
+                var ttID = extractTikTokID(g.url);
+                if (ttID) {
+                    html += '<div class="video-container">';
+                    html += '<iframe src="https://www.tiktok.com/embed/v2/' + ttID + '" allowfullscreen></iframe>';
+                    html += '<div class="video-play-overlay" onclick="pauseForVideo(this)"><i class="fab fa-tiktok"></i><span>Klik untuk menonton</span></div>';
+                    html += '</div>';
+                }
+            }
+            
+            if (g.keterangan) {
+                html += '<div class="galeri-caption">' + g.keterangan + '</div>';
+            }
+            html += '</div>';
+            
+            dotsHtml += '<button class="galeri-dot' + (i === 0 ? ' active' : '') + '" onclick="goToSlide(' + i + ')"></button>';
         }
 
-        function toggleMenu() {
-            document.getElementById('navbarMenu').classList.toggle('show');
+        slidesContainer.innerHTML = html;
+        if (dotsContainer) dotsContainer.innerHTML = dotsHtml;
+        updateCounter();
+        startSlideshow();
+    }
+
+    function pauseForVideo(overlayElement) {
+        if (slideInterval) {
+            clearInterval(slideInterval);
+            slideInterval = null;
+        }
+        slideshowPaused = true;
+        overlayElement.style.display = 'none';
+        showResumeBtn();
+    }
+
+    function showResumeBtn() {
+        if (document.getElementById('btnResumeSlide')) return;
+        
+        var container = document.querySelector('.galeri-slider-container');
+        if (!container) return;
+        
+        var btn = document.createElement('button');
+        btn.id = 'btnResumeSlide';
+        btn.className = 'btn-resume-slide';
+        btn.innerHTML = '<i class="fas fa-play"></i> Lanjutkan Slideshow';
+        btn.onclick = resumeSlideshow;
+        
+        container.appendChild(btn);
+    }
+
+    function resumeSlideshow() {
+        slideshowPaused = false;
+        
+        var btn = document.getElementById('btnResumeSlide');
+        if (btn) btn.remove();
+        
+        var overlays = document.querySelectorAll('.video-play-overlay');
+        for (var i = 0; i < overlays.length; i++) {
+            overlays[i].style.display = 'flex';
+        }
+        
+        startSlideshow();
+    }
+
+    function updateCounter() {
+        var counter = document.getElementById('galeriCounter');
+        if (counter && totalSlides > 0) {
+            counter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+        }
+    }
+
+    function updateSlider() {
+        var slides = document.getElementById('galeriSlides');
+        if (slides) {
+            slides.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+        }
+        
+        var dots = document.querySelectorAll('.galeri-dot');
+        for (var i = 0; i < dots.length; i++) {
+            if (i === currentSlide) {
+                dots[i].classList.add('active');
+            } else {
+                dots[i].classList.remove('active');
+            }
+        }
+        
+        updateCounter();
+    }
+
+    function nextSlide() {
+        if (slideshowPaused) return;
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlider();
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateSlider();
+        resetSlideshow();
+    }
+
+    function goToSlide(index) {
+        currentSlide = index;
+        updateSlider();
+        if (!slideshowPaused) {
+            resetSlideshow();
+        }
+    }
+
+    function startSlideshow() {
+        if (slideInterval) clearInterval(slideInterval);
+        if (totalSlides > 1 && !slideshowPaused) {
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+    }
+
+    function resetSlideshow() {
+        if (!slideshowPaused) {
+            startSlideshow();
+        }
+    }
+
+    function openLightbox(src) {
+        document.getElementById('lightboxImage').src = src;
+        document.getElementById('lightbox').classList.add('show');
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('show');
+    }
+
+    // ==================== SERBA SERBI ====================
+    function renderSerbaSerbi() {
+        var container = document.getElementById('serbaSerbiGrid');
+        if (!container) return;
+        
+        if (!DATA.serbaSerbi || DATA.serbaSerbi.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>Belum ada informasi</p></div>';
+            return;
         }
 
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        var sorted = DATA.serbaSerbi.slice().sort(function(a, b) {
+            if (a.penting && !b.penting) return -1;
+            if (!a.penting && b.penting) return 1;
+            return new Date(b.tanggal) - new Date(a.tanggal);
+        });
 
-        // Back to top visibility
-        window.addEventListener('scroll', function() {
-            var btn = document.getElementById('backToTop');
+        var html = '';
+        for (var i = 0; i < sorted.length; i++) {
+            var item = sorted[i];
+            var gambar = item.gambar || 'https://via.placeholder.com/800x500?text=Serba+Serbi';
+            var isiText = item.isi || '';
+            var isiShort = isiText.length > 120 ? isiText.substring(0, 120) + '...' : isiText;
+            var pentingClass = item.penting ? 'penting' : '';
+            var badgeHtml = item.penting ? '<span class="badge-penting">PENTING</span>' : '';
+
+            html += '<div class="serbasabi-card ' + pentingClass + '" onclick="openSerbaSerbiModal(' + i + ')">';
+            html += '<img src="' + gambar + '" alt="' + item.judul + '">';
+            html += '<div class="serbasabi-card-body">';
+            html += '<div class="serbasabi-card-header">';
+            html += '<span class="date"><i class="far fa-calendar-alt"></i> ' + formatTanggal(item.tanggal) + '</span>';
+            html += badgeHtml;
+            html += '</div>';
+            html += '<h4>' + item.judul + '</h4>';
+            html += '<p>' + isiShort + '</p>';
+            html += '<span class="read-more">Baca selengkapnya</span>';
+            html += '</div></div>';
+        }
+        container.innerHTML = html;
+    }
+
+    var sortedSerbaSerbi = [];
+    function openSerbaSerbiModal(index) {
+        sortedSerbaSerbi = DATA.serbaSerbi.slice().sort(function(a, b) {
+            if (a.penting && !b.penting) return -1;
+            if (!a.penting && b.penting) return 1;
+            return new Date(b.tanggal) - new Date(a.tanggal);
+        });
+
+        var item = sortedSerbaSerbi[index];
+        if (!item) return;
+
+        document.getElementById('serbaSerbiModalTitle').textContent = item.judul;
+        document.getElementById('serbaSerbiModalImage').src = item.gambar || 'https://via.placeholder.com/800x500?text=Serba+Serbi';
+        document.getElementById('serbaSerbiModalDate').innerHTML = '<i class="far fa-calendar-alt"></i> ' + formatTanggal(item.tanggal);
+        document.getElementById('serbaSerbiModalContent').textContent = item.isi;
+        document.getElementById('serbaSerbiModal').classList.add('show');
+    }
+
+    function closeSerbaSerbiModal() {
+        document.getElementById('serbaSerbiModal').classList.remove('show');
+    }
+
+    // ==================== UTILITY ====================
+    function copyRekening() {
+        var rekeningEl = document.getElementById('rekeningNumber');
+        var rekening = rekeningEl ? rekeningEl.textContent.replace(/\s/g, '') : '2022112212';
+        navigator.clipboard.writeText(rekening).then(function() {
+            alert('Nomor rekening berhasil disalin!');
+        }).catch(function() {
+            prompt('Salin nomor rekening:', rekening);
+        });
+    }
+
+    function toggleMenu() {
+        document.getElementById('navbarMenu').classList.toggle('show');
+    }
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Back to top visibility
+    window.addEventListener('scroll', function() {
+        var btn = document.getElementById('backToTop');
+        if (btn) {
             if (window.pageYOffset > 300) {
                 btn.classList.add('show');
             } else {
                 btn.classList.remove('show');
             }
-        });
+        }
+    });
 
-        // Close mobile menu on link click
-        document.querySelectorAll('.navbar-menu a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                document.getElementById('navbarMenu').classList.remove('show');
-            });
+    // Close mobile menu on link click
+    var menuLinks = document.querySelectorAll('.navbar-menu a');
+    for (var i = 0; i < menuLinks.length; i++) {
+        menuLinks[i].addEventListener('click', function() {
+            document.getElementById('navbarMenu').classList.remove('show');
         });
+    }
 
-        // Close modal on outside click
-        document.querySelectorAll('.modal').forEach(function(modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) modal.classList.remove('show');
-            });
+    // Close modal on outside click
+    var modals = document.querySelectorAll('.modal');
+    for (var i = 0; i < modals.length; i++) {
+        modals[i].addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('show');
         });
+    }
 
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                var target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    var offsetTop = target.offsetTop - 80;
-                    window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-                }
-            });
+    // Smooth scroll
+    var anchors = document.querySelectorAll('a[href^="#"]');
+    for (var i = 0; i < anchors.length; i++) {
+        anchors[i].addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                var offsetTop = target.offsetTop - 80;
+                window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+            }
         });
+    }
 
-        // INIT
-        document.addEventListener('DOMContentLoaded', function() {
-            loadJadwalSholat();
-            loadData();
-        });
-    </script>
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        loadJadwalSholat();
+        loadData();
+    });
+</script>
 </body>
 </html>
     
