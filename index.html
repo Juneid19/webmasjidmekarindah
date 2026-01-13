@@ -1607,48 +1607,52 @@
 
     // ==================== PENGURUS ====================
     function renderPengurus() {
-        var container = document.getElementById('pengurusContainer');
-        if (!container) return;
-        
-        if (!DATA.pengurus || DATA.pengurus.length === 0) {
-            container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
-            return;
-        }
-
-        var categories = {
-            'yayasan': { title: 'Yayasan Islam Mekarindah', data: [] },
-            'dkm': { title: 'Dewan Kemakmuran Masjid (DKM)', data: [] },
-            'majlistaklim': { title: 'Majlis Ta\'lim', data: [] }
-        };
-
-        for (var i = 0; i < DATA.pengurus.length; i++) {
-            var p = DATA.pengurus[i];
-            if (categories[p.kategori]) categories[p.kategori].data.push(p);
-        }
-
-        var html = '';
-        var keys = ['yayasan', 'dkm', 'majlistaklim'];
-
-        for (var k = 0; k < keys.length; k++) {
-            var cat = categories[keys[k]];
-            if (cat.data.length > 0) {
-                html += '<div class="pengurus-kategori">';
-                html += '<div class="pengurus-kategori-title"><h3>' + cat.title + '</h3></div>';
-                html += '<div class="pengurus-grid">';
-                for (var i = 0; i < cat.data.length; i++) {
-                    var p = cat.data[i];
-                    var foto = p.foto || 'https://via.placeholder.com/100x100?text=' + p.nama.charAt(0);
-                    html += '<div class="pengurus-card">';
-                    html += '<img src="' + foto + '" alt="' + p.nama + '">';
-                    html += '<h4>' + p.nama + '</h4>';
-                    html += '<p>' + p.jabatan + '</p>';
-                    html += '</div>';
-                }
-                html += '</div></div>';
-            }
-        }
-        container.innerHTML = html || '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
+    var container = document.getElementById('pengurusContainer');
+    if (!container) return;
+    
+    if (!DATA.pengurus || DATA.pengurus.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
+        return;
     }
+
+    var categories = {
+        'yayasan': { title: 'Yayasan Islam Mekarindah', data: [] },
+        'dkm': { title: 'Dewan Kemakmuran Masjid (DKM)', data: [] },
+        'majlistaklim': { title: 'Majlis Ta\'lim', data: [] }
+    };
+
+    for (var i = 0; i < DATA.pengurus.length; i++) {
+        var p = DATA.pengurus[i];
+        if (categories[p.kategori]) categories[p.kategori].data.push(p);
+    }
+
+    var html = '';
+    var keys = ['yayasan', 'dkm', 'majlistaklim'];
+
+    for (var k = 0; k < keys.length; k++) {
+        var cat = categories[keys[k]];
+        if (cat.data.length > 0) {
+            html += '<div class="pengurus-kategori">';
+            html += '<div class="pengurus-kategori-title"><h3>' + cat.title + '</h3></div>';
+            html += '<div class="pengurus-grid">';
+            for (var i = 0; i < cat.data.length; i++) {
+                var p = cat.data[i];
+                // FIX: Gunakan ui-avatars.com
+                var foto = p.foto;
+                if (!foto || foto === '') {
+                    foto = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.nama) + '&size=100&background=1B5E20&color=fff&bold=true';
+                }
+                html += '<div class="pengurus-card">';
+                html += '<img src="' + foto + '" alt="' + p.nama + '">';
+                html += '<h4>' + p.nama + '</h4>';
+                html += '<p>' + p.jabatan + '</p>';
+                html += '</div>';
+            }
+            html += '</div></div>';
+        }
+    }
+    container.innerHTML = html || '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data pengurus</p></div>';
+}
 
     // ==================== KAJIAN ====================
     function renderKajian() {
