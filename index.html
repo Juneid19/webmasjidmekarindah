@@ -1943,73 +1943,285 @@
         
         startSlideshow();
     }
+// ==================== GALERI SLIDER ====================
+var galeriIndex = 0;
+var galeriAutoplay = null;
+var galeriPaused = false;
 
-    function updateCounter() {
-        var counter = document.getElementById('galeriCounter');
-        if (counter && totalSlides > 0) {
-            counter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+function renderGaleri() {
+    var container = document.getElementById('galeriContainer');
+    if (!container) return;
+
+    var galeri = [];
+    if (DATA.galeri) {
+        galeri = DATA.galeri;
+    }
+
+    if (galeri.length === 0) {
+        container.innerHTML = '<div class="galeri-empty"><i class="fas fa-images"></i><p>Belum ada foto/video di galeri</p></div>';
+        return;
+    }
+
+    var slidesHTML = '';
+    var dotsHTML = '';
+    var thumbsHTML = '';
+
+    for (var i = 0; i < galeri.length; i++) {
+        var g = galeri[i];
+        var tipe = g.tipe ? g.tipe : 'foto';
+        if (tipe === 'video') { tipe = 'youtube'; }
+
+        if (tipe === 'youtube' && g.youtubeId) {
+            slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="youtube">';
+            slidesHTML = slidesHTML + '<div class="video-wrapper" id="videoWrapper' + i + '">';
+            slidesHTML = slidesHTML + '<div class="video-overlay" onclick="playYoutube(' + i + ', \'' + g.youtubeId + '\')">';
+            slidesHTML = slidesHTML + '<img src="https://img.youtube.com/vi/' + g.youtubeId + '/hqdefault.jpg" onerror="this.src=\'https://img.youtube.com/vi/' + g.youtubeId + '/mqdefault.jpg\'" alt="Video">';
+            slidesHTML = slidesHTML + '<div class="play-button youtube"><i class="fab fa-youtube"></i></div>';
+            slidesHTML = slidesHTML + '</div>';
+            slidesHTML = slidesHTML + '<div class="video-container" id="videoContainer' + i + '" style="display:none;"></div>';
+            slidesHTML = slidesHTML + '</div>';
+            if (g.caption) { slidesHTML = slidesHTML + '<div class="caption"><i class="fab fa-youtube"></i> ' + g.caption + '</div>'; }
+            slidesHTML = slidesHTML + '</div>';
+
+            thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+            thumbsHTML = thumbsHTML + '<img src="https://img.youtube.com/vi/' + g.youtubeId + '/0.jpg" alt="Thumbnail">';
+            thumbsHTML = thumbsHTML + '<div class="thumb-play youtube"><i class="fab fa-youtube"></i></div>';
+            thumbsHTML = thumbsHTML + '</div>';
+
+        } else if (tipe === 'instagram' && g.instagramId) {
+            slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="instagram">';
+            slidesHTML = slidesHTML + '<div class="video-wrapper" id="videoWrapper' + i + '">';
+            slidesHTML = slidesHTML + '<div class="video-overlay instagram-overlay" onclick="playInstagram(' + i + ', \'' + g.instagramId + '\')">';
+            slidesHTML = slidesHTML + '<div class="social-placeholder instagram"><i class="fab fa-instagram"></i><span>Klik untuk melihat</span></div>';
+            slidesHTML = slidesHTML + '</div>';
+            slidesHTML = slidesHTML + '<div class="video-container" id="videoContainer' + i + '" style="display:none;"></div>';
+            slidesHTML = slidesHTML + '</div>';
+            if (g.caption) { slidesHTML = slidesHTML + '<div class="caption"><i class="fab fa-instagram"></i> ' + g.caption + '</div>'; }
+            slidesHTML = slidesHTML + '</div>';
+
+            thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+            thumbsHTML = thumbsHTML + '<div class="thumb-social instagram"><i class="fab fa-instagram"></i></div>';
+            thumbsHTML = thumbsHTML + '</div>';
+
+        } else if (tipe === 'tiktok' && g.tiktokId) {
+            slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="tiktok">';
+            slidesHTML = slidesHTML + '<div class="video-wrapper" id="videoWrapper' + i + '">';
+            slidesHTML = slidesHTML + '<div class="video-overlay tiktok-overlay" onclick="playTiktok(' + i + ', \'' + g.tiktokId + '\', \'' + (g.tiktokUrl ? g.tiktokUrl : '') + '\')">';
+            slidesHTML = slidesHTML + '<div class="social-placeholder tiktok"><i class="fab fa-tiktok"></i><span>Klik untuk melihat</span></div>';
+            slidesHTML = slidesHTML + '</div>';
+            slidesHTML = slidesHTML + '<div class="video-container" id="videoContainer' + i + '" style="display:none;"></div>';
+            slidesHTML = slidesHTML + '</div>';
+            if (g.caption) { slidesHTML = slidesHTML + '<div class="caption"><i class="fab fa-tiktok"></i> ' + g.caption + '</div>'; }
+            slidesHTML = slidesHTML + '</div>';
+
+            thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+            thumbsHTML = thumbsHTML + '<div class="thumb-social tiktok"><i class="fab fa-tiktok"></i></div>';
+            thumbsHTML = thumbsHTML + '</div>';
+
+        } else {
+            var imgUrl = g.url ? g.url : 'https://via.placeholder.com/900x450?text=Galeri';
+            var imgAlt = g.caption ? g.caption : 'Galeri';
+
+            slidesHTML = slidesHTML + '<div class="galeri-slide" data-index="' + i + '" data-type="foto">';
+            slidesHTML = slidesHTML + '<img src="' + imgUrl + '" alt="' + imgAlt + '" onclick="openLightbox(\'' + imgUrl + '\')">';
+            if (g.caption) { slidesHTML = slidesHTML + '<div class="caption">' + g.caption + '</div>'; }
+            slidesHTML = slidesHTML + '</div>';
+
+            thumbsHTML = thumbsHTML + '<div class="galeri-thumb ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')">';
+            thumbsHTML = thumbsHTML + '<img src="' + imgUrl + '" alt="Thumbnail">';
+            thumbsHTML = thumbsHTML + '</div>';
+        }
+
+        dotsHTML = dotsHTML + '<button class="galeri-dot ' + (i === 0 ? 'active' : '') + '" onclick="goToGaleri(' + i + ')"></button>';
+    }
+
+    var html = '';
+    html = html + '<div class="galeri-slider">';
+    html = html + '<div class="galeri-track" id="galeriTrack">' + slidesHTML + '</div>';
+    html = html + '<button class="galeri-nav prev" onclick="moveGaleri(-1)"><i class="fas fa-chevron-left"></i></button>';
+    html = html + '<button class="galeri-nav next" onclick="moveGaleri(1)"><i class="fas fa-chevron-right"></i></button>';
+    html = html + '</div>';
+    html = html + '<div class="galeri-dots" id="galeriDots">' + dotsHTML + '</div>';
+    html = html + '<div class="galeri-thumbs" id="galeriThumbs">' + thumbsHTML + '</div>';
+    html = html + '<div id="galeriResumeContainer"></div>';
+
+    container.innerHTML = html;
+    galeriIndex = 0;
+    galeriPaused = false;
+    startGaleriAutoplay();
+}
+
+// ==================== GALERI NAVIGATION ====================
+function moveGaleri(direction) {
+    var galeri = DATA.galeri || [];
+    if (galeri.length === 0) return;
+    
+    galeriIndex = galeriIndex + direction;
+    if (galeriIndex < 0) galeriIndex = galeri.length - 1;
+    if (galeriIndex >= galeri.length) galeriIndex = 0;
+    
+    updateGaleriSlide();
+    if (!galeriPaused) {
+        restartGaleriAutoplay();
+    }
+}
+
+function goToGaleri(index) {
+    galeriIndex = index;
+    updateGaleriSlide();
+    if (!galeriPaused) {
+        restartGaleriAutoplay();
+    }
+}
+
+function updateGaleriSlide() {
+    var track = document.getElementById('galeriTrack');
+    if (track) {
+        track.style.transform = 'translateX(-' + (galeriIndex * 100) + '%)';
+    }
+    
+    // Update dots
+    var dots = document.querySelectorAll('.galeri-dot');
+    for (var i = 0; i < dots.length; i++) {
+        if (i === galeriIndex) {
+            dots[i].classList.add('active');
+        } else {
+            dots[i].classList.remove('active');
         }
     }
-
-    function updateSlider() {
-        var slides = document.getElementById('galeriSlides');
-        if (slides) {
-            slides.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
-        }
-        
-        var dots = document.querySelectorAll('.galeri-dot');
-        for (var i = 0; i < dots.length; i++) {
-            if (i === currentSlide) {
-                dots[i].classList.add('active');
-            } else {
-                dots[i].classList.remove('active');
-            }
-        }
-        
-        updateCounter();
-    }
-
-    function nextSlide() {
-        if (slideshowPaused) return;
-        currentSlide = (currentSlide + 1) % totalSlides;
-        updateSlider();
-    }
-
-    function prevSlide() {
-        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-        updateSlider();
-        resetSlideshow();
-    }
-
-    function goToSlide(index) {
-        currentSlide = index;
-        updateSlider();
-        if (!slideshowPaused) {
-            resetSlideshow();
+    
+    // Update thumbs
+    var thumbs = document.querySelectorAll('.galeri-thumb');
+    for (var i = 0; i < thumbs.length; i++) {
+        if (i === galeriIndex) {
+            thumbs[i].classList.add('active');
+        } else {
+            thumbs[i].classList.remove('active');
         }
     }
+}
 
-    function startSlideshow() {
-        if (slideInterval) clearInterval(slideInterval);
-        if (totalSlides > 1 && !slideshowPaused) {
-            slideInterval = setInterval(nextSlide, 5000);
+// ==================== GALERI AUTOPLAY ====================
+function startGaleriAutoplay() {
+    stopGaleriAutoplay();
+    if (!galeriPaused) {
+        galeriAutoplay = setInterval(function() {
+            moveGaleri(1);
+        }, 5000);
+    }
+}
+
+function stopGaleriAutoplay() {
+    if (galeriAutoplay) {
+        clearInterval(galeriAutoplay);
+        galeriAutoplay = null;
+    }
+}
+
+function restartGaleriAutoplay() {
+    stopGaleriAutoplay();
+    startGaleriAutoplay();
+}
+
+// ==================== PAUSE & RESUME ====================
+function pauseGaleriForVideo() {
+    galeriPaused = true;
+    stopGaleriAutoplay();
+    showResumeButton();
+}
+
+function showResumeButton() {
+    var container = document.getElementById('galeriResumeContainer');
+    if (!container) return;
+    if (document.getElementById('btnResumeGaleri')) return;
+    
+    var btn = document.createElement('button');
+    btn.id = 'btnResumeGaleri';
+    btn.className = 'btn-resume-galeri';
+    btn.innerHTML = '<i class="fas fa-play"></i> Lanjutkan Slideshow';
+    btn.onclick = resumeGaleri;
+    container.appendChild(btn);
+}
+
+function resumeGaleri() {
+    galeriPaused = false;
+    
+    // Hapus tombol resume
+    var btn = document.getElementById('btnResumeGaleri');
+    if (btn) btn.remove();
+    
+    // Reset semua video container
+    var galeri = DATA.galeri || [];
+    for (var i = 0; i < galeri.length; i++) {
+        var overlay = document.querySelector('#videoWrapper' + i + ' .video-overlay');
+        var videoContainer = document.getElementById('videoContainer' + i);
+        if (overlay) overlay.style.display = 'flex';
+        if (videoContainer) {
+            videoContainer.style.display = 'none';
+            videoContainer.innerHTML = '';
         }
     }
+    
+    // Lanjutkan autoplay
+    startGaleriAutoplay();
+}
 
-    function resetSlideshow() {
-        if (!slideshowPaused) {
-            startSlideshow();
-        }
+// ==================== PLAY VIDEO FUNCTIONS ====================
+function playYoutube(index, videoId) {
+    pauseGaleriForVideo();
+    
+    var overlay = document.querySelector('#videoWrapper' + index + ' .video-overlay');
+    var container = document.getElementById('videoContainer' + index);
+    
+    if (overlay) overlay.style.display = 'none';
+    if (container) {
+        container.style.display = 'block';
+        container.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
     }
+}
 
-    function openLightbox(src) {
-        document.getElementById('lightboxImage').src = src;
-        document.getElementById('lightbox').classList.add('show');
+function playInstagram(index, postId) {
+    pauseGaleriForVideo();
+    
+    var overlay = document.querySelector('#videoWrapper' + index + ' .video-overlay');
+    var container = document.getElementById('videoContainer' + index);
+    
+    if (overlay) overlay.style.display = 'none';
+    if (container) {
+        container.style.display = 'block';
+        container.innerHTML = '<iframe src="https://www.instagram.com/reel/' + postId + '/embed/" frameborder="0" scrolling="no" allowfullscreen></iframe>';
     }
+}
 
-    function closeLightbox() {
-        document.getElementById('lightbox').classList.remove('show');
+function playTiktok(index, videoId, fullUrl) {
+    pauseGaleriForVideo();
+    
+    var overlay = document.querySelector('#videoWrapper' + index + ' .video-overlay');
+    var container = document.getElementById('videoContainer' + index);
+    
+    if (overlay) overlay.style.display = 'none';
+    if (container) {
+        container.style.display = 'block';
+        container.innerHTML = '<iframe src="https://www.tiktok.com/embed/v2/' + videoId + '" frameborder="0" allow="autoplay" allowfullscreen></iframe>';
     }
+}
+
+// ==================== LIGHTBOX ====================
+function openLightbox(src) {
+    var lightbox = document.getElementById('lightbox');
+    var img = document.getElementById('lightboxImage');
+    if (lightbox && img) {
+        img.src = src;
+        lightbox.classList.add('show');
+    }
+}
+
+function closeLightbox() {
+    var lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+        lightbox.classList.remove('show');
+    }
+}
 
     // ==================== SERBA SERBI ====================
     function renderSerbaSerbi() {
